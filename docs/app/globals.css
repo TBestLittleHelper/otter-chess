@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #FAFAF6;
+  --color-panel: #F1EFE4;
+  --color-line: #D7D4C2;
+  --color-pear: #5C8A2E;
+  --color-pear-dim: #8CA35F;
+  --color-pear-tint: #E9F0D9;
+  --color-pear-deep: #3F5F1F;
+  --color-paper: #11120D;
+  --color-muted: #525447;
+
+  /* Chessboard square colours — themed to the pear brand */
+  --color-sq-light: #FBFAF5;
+  --color-sq-dark: #E7EFD8;
+  --color-sq-select: #CFE1AC;
+  --color-sq-legal: #DCE9C4;
+  
+  --font-sans: var(--font-inter), sans-serif;
+  --font-space: var(--font-space-grotesk), sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), monospace;
+}
+
+:root {
+  --bg: #FAFAF6;
+  --panel: #F1EFE4;
+  --line: #D7D4C2;
+  --pear: #5C8A2E;
+  --pear-dim: #8CA35F;
+  --pear-tint: #E9F0D9;
+  --pear-deep: #3F5F1F;
+  --paper: #11120D;
+  --muted: #525447;
+
+  --sq-dark: #E7EFD8;
+  --sq-light: #FBFAF5;
+  --sq-select: #CFE1AC;
+  --sq-legal: #DCE9C4;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--paper);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--pear-tint);
+  color: var(--pear-deep);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pear-dim);
+}
+
+/* Chessground Custom Theme Overrides — Pear/Green */
+.cg-wrap cg-board {
+  background-color: #FBFAF5 !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyIDIiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRTdFRkQ4Ii8+PHJlY3QgeT0iMSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0U3RUZEOCIvPjxyZWN0IHg9IjEiIHk9IjEiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48L3N2Zz4=") !important;
+  background-size: 25% 25% !important;
+  background-repeat: repeat !important;
+}
+
+.cg-wrap cg-board square.selected {
+  background-color: #CFE1AC !important;
+  box-shadow: none !important;
+}
+.cg-wrap cg-board square.last-move {
+  background-color: rgba(92, 138, 46, 0.25) !important;
+}
+.cg-wrap cg-board square.move-dest {
+  background: radial-gradient(rgba(92, 138, 46, 0.5) 22%, #5C8A2E 0, rgba(0, 0, 0, 0.2) 0, rgba(0, 0, 0, 0) 0) !important;
+}
+.cg-wrap cg-board square.oc.move-dest {
+  background: radial-gradient(transparent 0%, transparent 80%, rgba(92, 138, 46, 0.35) 80%) !important;
+}
+.cg-wrap cg-board square.move-dest:hover {
+  background: rgba(92, 138, 46, 0.3) !important;
+}
+.cg-wrap cg-board square.check {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(239, 68, 68, 0.85) 0%,
+    rgba(220, 38, 38, 0.65) 25%,
+    rgba(185, 28, 28, 0) 89%,
+    rgba(153, 27, 27, 0) 100%
+  ) !important;
+}
+
+/* Coordinate label colors */
+.cg-wrap .orientation-white .ranks :nth-child(odd),
+.cg-wrap .orientation-white .files :nth-child(even),
+.cg-wrap .orientation-black .ranks :nth-child(even),
+.cg-wrap .orientation-black .files :nth-child(odd) {
+  color: rgba(92, 138, 46, 0.85) !important;
+}
+.cg-wrap .orientation-white .ranks :nth-child(even),
+.cg-wrap .orientation-white .files :nth-child(odd),
+.cg-wrap .orientation-black .ranks :nth-child(odd),
+.cg-wrap .orientation-black .files :nth-child(even) {
+  color: rgba(28, 29, 22, 0.55) !important;
+}
+

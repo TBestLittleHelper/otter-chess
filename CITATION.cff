@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - given-names: Tarun
+    affiliation: "Peargent Labs"
+title: "Otter: A Skill-Conditioned Chess Move Prediction Model"
+version: 0.1.0
+date-released: 2026-07-07

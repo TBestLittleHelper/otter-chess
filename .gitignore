@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Python Packaging & Distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# Weights & Checkpoints (never commit heavy weights)
+checkpoints/
+*.pt
+*.pth
+
+# Wandb logs & run data
+wandb/
+
+# Local configuration / caches
+.cache/
+.pyrefly/
+.ipynb_checkpoints/
+
+# OS specific files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,12 @@
+[package]
+name = "otter_pipeline"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pgn-reader = "0.29"
+zstd = "0.13"
+parquet = "53"
+arrow = "53"
+anyhow = "1"
+rayon = "1"
