@@ -69,10 +69,9 @@ body {
 
 /* Chessground Custom Theme Overrides — Pear/Green */
 .cg-wrap cg-board {
-  background-color: #FBFAF5 !important;
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyIDIiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRTdFRkQ4Ii8+PHJlY3QgeT0iMSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0U3RUZEOCIvPjxyZWN0IHg9IjEiIHk9IjEiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48L3N2Zz4=") !important;
-  background-size: 25% 25% !important;
-  background-repeat: repeat !important;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNFN0VGRDgiLz48cmVjdCB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iMiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHg9IjQiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSI2IiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iMSIgeT0iMSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHg9IjMiIHk9IjEiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSI1IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iNyIgeT0iMSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHk9IjIiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iNCIgeT0iMiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHg9IjYiIHk9IjIiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSIxIiB5PSIzIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHg9IjUiIHk9IjMiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSI3IiB5PSIzIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeT0iNCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHg9IjIiIHk9IjQiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iNiIgeT0iNCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHg9IjEiIHk9IjUiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSIzIiB5PSI1IiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iNSIgeT0iNSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHg9IjciIHk9IjUiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB5PSI2IiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iMiIgeT0iNiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHg9IjQiIHk9IjYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSI2IiB5PSI2IiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjxyZWN0IHg9IjMiIHk9IjciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGQkZBRjUiLz48cmVjdCB4PSI1IiB5PSI3IiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjRkJGQUY1Ii8+PHJlY3QgeD0iNyIgeT0iNyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0ZCRkFGNSIvPjwvc3ZnPg==") !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
 }
 
 .cg-wrap cg-board square.selected {
@@ -101,17 +100,17 @@ body {
   ) !important;
 }
 
-/* Coordinate label colors */
-.cg-wrap .orientation-white .ranks :nth-child(odd),
-.cg-wrap .orientation-white .files :nth-child(even),
-.cg-wrap .orientation-black .ranks :nth-child(even),
-.cg-wrap .orientation-black .files :nth-child(odd) {
-  color: rgba(92, 138, 46, 0.85) !important;
+/* Coordinate label colors — Styled dark slate for high legibility on light squares */
+.cg-wrap coords coord,
+.cg-wrap .ranks coord,
+.cg-wrap .files coord {
+  color: rgba(28, 29, 22, 0.85) !important;
+  font-weight: 600 !important;
 }
-.cg-wrap .orientation-white .ranks :nth-child(even),
-.cg-wrap .orientation-white .files :nth-child(odd),
-.cg-wrap .orientation-black .ranks :nth-child(odd),
-.cg-wrap .orientation-black .files :nth-child(even) {
-  color: rgba(28, 29, 22, 0.55) !important;
+
+
+
+.cg-wrap {
+  background-color: var(--sq-dark) !important;
 }
 
