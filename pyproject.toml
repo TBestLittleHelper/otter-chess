@@ -20,6 +20,12 @@ dependencies = [
     "torch",
 ]
 
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.urls]
+Repository = "https://github.com/peargentlabs/otter-chess"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

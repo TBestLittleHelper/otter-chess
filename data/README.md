@@ -63,11 +63,14 @@ The `elo_band` field divides players into 9 separate brackets based on their `av
 
 ## How to Generate Data
 
-Data is generated from raw Lichess PGN dumps (e.g. from `database.lichess.org`). 
+Data is generated from raw Lichess PGN dumps (e.g. from `database.lichess.org`).
 
 You can use the Rust conversion pipeline in the main repository under `data_pipeline/`:
 1. Compile the pipeline in release mode: `cargo build --release`.
-2. Run it on PGN files to extract rapid games and export them directly to partitioned Parquet files:
+2. Run it on a directory of `YYYY-MM.pgn.zst` dumps to extract rapid games and export them
+   directly to partitioned Parquet files:
    ```bash
-   ./target/release/data_pipeline --pgn /path/to/lichess.pgn --out-dir /path/to/project/data
+   ./target/release/otter_pipeline /path/to/lichess_dumps /path/to/project/data
    ```
+
+See [`data_pipeline/README.md`](../data_pipeline/README.md) for full CLI details.

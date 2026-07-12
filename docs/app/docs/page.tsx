@@ -1,10 +1,59 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import CopyCodeButton from '../../components/CopyCodeButton';
+
+const SECTION_LABELS: Record<string, string> = {
+  install: 'Installation',
+  quickstart: 'Quickstart',
+  'model-card': 'Model card',
+  'otter-model': 'OtterModel()',
+  'model-predict': 'model.predict()',
+  webgpu: 'WebGPU / WASM',
+  formats: 'Input / output formats',
+};
+
+function SidebarLink({
+  id,
+  label,
+  mono,
+  active,
+  onNavigate,
+}: {
+  id: string;
+  label: string;
+  mono?: boolean;
+  active: boolean;
+  onNavigate: (id: string) => void;
+}) {
+  return (
+    <a
+      href={`#${id}`}
+      onClick={(e) => {
+        e.preventDefault();
+        onNavigate(id);
+      }}
+      className={`side-link block px-7 py-1.5 text-[13px] border-l-2 transition-all duration-150 ${mono ? 'font-mono' : ''} ${
+        active
+          ? 'text-pear border-pear bg-panel font-medium'
+          : 'border-transparent text-muted hover:text-paper'
+      }`}
+    >
+      {label}
+    </a>
+  );
+}
 
 export default function DocsPage() {
   const [activeDocsSection, setActiveDocsSection] = useState<string>('install');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const docsContentRef = useRef<HTMLDivElement | null>(null);
+
+  const navigateToSection = (id: string) => {
+    setActiveDocsSection(id);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setMobileNavOpen(false);
+  };
 
   // Track scroll position in Docs to update active sidebar link
   useEffect(() => {
@@ -38,132 +87,73 @@ export default function DocsPage() {
     };
   }, []);
 
+  // Close the mobile section drawer on Escape
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileNavOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mobileNavOpen]);
+
   return (
-    <div className="docs-shell flex-grow flex min-h-0 h-[calc(100vh-68px)]">
-      
+    <div className="docs-shell relative flex-grow flex min-h-0 h-[calc(100vh-68px)]">
+
+      {/* Mobile section toggle bar */}
+      <div className="lg:hidden absolute inset-x-0 top-0 z-30 flex items-center justify-between px-5 h-12 border-b border-line bg-bg">
+        <button
+          type="button"
+          onClick={() => setMobileNavOpen((v) => !v)}
+          aria-expanded={mobileNavOpen}
+          aria-controls="docs-mobile-nav"
+          className="font-mono text-[12px] text-muted hover:text-paper flex items-center gap-2 cursor-pointer"
+        >
+          <span>Sections</span>
+          <span className="text-line">/</span>
+          <span className="text-pear">{SECTION_LABELS[activeDocsSection]}</span>
+          <span className={`inline-block transition-transform duration-150 ${mobileNavOpen ? 'rotate-180' : ''}`}>&#8964;</span>
+        </button>
+      </div>
+
+      {/* Mobile backdrop */}
+      {mobileNavOpen && (
+        <div
+          className="lg:hidden fixed inset-x-0 top-[68px] bottom-0 z-20 bg-paper/30"
+          onClick={() => setMobileNavOpen(false)}
+        />
+      )}
+
       {/* Left Sidebar Nav */}
-      <aside className="sidebar w-[240px] shrink-0 border-r border-line py-8 sticky top-0 overflow-y-auto flex flex-col h-full bg-bg">
+      <aside
+        id="docs-mobile-nav"
+        className={`sidebar w-[240px] shrink-0 border-r border-line py-8 overflow-y-auto bg-bg
+          lg:flex lg:flex-col lg:sticky lg:top-0 lg:h-full
+          ${mobileNavOpen ? 'flex flex-col fixed left-0 top-[68px] bottom-0 z-30 shadow-lg' : 'hidden'}`}
+      >
         <div className="side-group mb-7">
           <div className="side-label font-mono text-[10px] text-pear-dim tracking-[0.1em] px-7 mb-2.5 uppercase">Getting started</div>
-          <a
-            href="#install"
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveDocsSection('install');
-              document.getElementById('install')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`side-link block px-7 py-1.5 text-[13px] border-l-2 transition-all duration-150 ${
-              activeDocsSection === 'install'
-                ? 'text-pear border-pear bg-panel font-medium'
-                : 'border-transparent text-muted hover:text-paper'
-            }`}
-          >
-            Installation
-          </a>
-          <a
-            href="#quickstart"
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveDocsSection('quickstart');
-              document.getElementById('quickstart')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`side-link block px-7 py-1.5 text-[13px] border-l-2 transition-all duration-150 ${
-              activeDocsSection === 'quickstart'
-                ? 'text-pear border-pear bg-panel font-medium'
-                : 'border-transparent text-muted hover:text-paper'
-            }`}
-          >
-            Quickstart
-          </a>
-          <a
-            href="#model-card"
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveDocsSection('model-card');
-              document.getElementById('model-card')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`side-link block px-7 py-1.5 text-[13px] border-l-2 transition-all duration-150 ${
-              activeDocsSection === 'model-card'
-                ? 'text-pear border-pear bg-panel font-medium'
-                : 'border-transparent text-muted hover:text-paper'
-            }`}
-          >
-            Model card
-          </a>
+          <SidebarLink id="install" label="Installation" active={activeDocsSection === 'install'} onNavigate={navigateToSection} />
+          <SidebarLink id="quickstart" label="Quickstart" active={activeDocsSection === 'quickstart'} onNavigate={navigateToSection} />
+          <SidebarLink id="model-card" label="Model card" active={activeDocsSection === 'model-card'} onNavigate={navigateToSection} />
         </div>
-        
+
         <div className="side-group mb-7">
           <div className="side-label font-mono text-[10px] text-pear-dim tracking-[0.1em] px-7 mb-2.5 uppercase">API reference</div>
-          <a
-            href="#otter-model"
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveDocsSection('otter-model');
-              document.getElementById('otter-model')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`side-link block px-7 py-1.5 text-[13px] border-l-2 transition-all duration-150 font-mono ${
-              activeDocsSection === 'otter-model'
-                ? 'text-pear border-pear bg-panel font-medium'
-                : 'border-transparent text-muted hover:text-paper'
-            }`}
-          >
-            OtterModel()
-          </a>
-          <a
-            href="#model-predict"
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveDocsSection('model-predict');
-              document.getElementById('model-predict')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`side-link block px-7 py-1.5 text-[13px] border-l-2 transition-all duration-150 font-mono ${
-              activeDocsSection === 'model-predict'
-                ? 'text-pear border-pear bg-panel font-medium'
-                : 'border-transparent text-muted hover:text-paper'
-            }`}
-          >
-            model.predict()
-          </a>
+          <SidebarLink id="otter-model" label="OtterModel()" mono active={activeDocsSection === 'otter-model'} onNavigate={navigateToSection} />
+          <SidebarLink id="model-predict" label="model.predict()" mono active={activeDocsSection === 'model-predict'} onNavigate={navigateToSection} />
         </div>
-        
+
         <div className="side-group mb-7">
           <div className="side-label font-mono text-[10px] text-pear-dim tracking-[0.1em] px-7 mb-2.5 uppercase">Runtime</div>
-          <a
-            href="#webgpu"
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveDocsSection('webgpu');
-              document.getElementById('webgpu')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`side-link block px-7 py-1.5 text-[13px] border-l-2 transition-all duration-150 ${
-              activeDocsSection === 'webgpu'
-                ? 'text-pear border-pear bg-panel font-medium'
-                : 'border-transparent text-muted hover:text-paper'
-            }`}
-          >
-            WebGPU / WASM
-          </a>
-          <a
-            href="#formats"
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveDocsSection('formats');
-              document.getElementById('formats')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`side-link block px-7 py-1.5 text-[13px] border-l-2 transition-all duration-150 ${
-              activeDocsSection === 'formats'
-                ? 'text-pear border-pear bg-panel font-medium'
-                : 'border-transparent text-muted hover:text-paper'
-            }`}
-          >
-            Input / output formats
-          </a>
+          <SidebarLink id="webgpu" label="WebGPU / WASM" active={activeDocsSection === 'webgpu'} onNavigate={navigateToSection} />
+          <SidebarLink id="formats" label="Input / output formats" active={activeDocsSection === 'formats'} onNavigate={navigateToSection} />
         </div>
       </aside>
 
       {/* Right Documentation detail */}
-      <article ref={docsContentRef} className="flex-grow p-[56px] py-[32px] overflow-y-auto h-full space-y-[44px]">
-        
+      <article ref={docsContentRef} className="flex-grow p-[24px] pt-[68px] sm:p-[56px] sm:pt-[68px] lg:py-[32px] overflow-y-auto h-full space-y-[44px]">
+
         {/* Installation */}
         <section id="install" className="pt-8">
           <div className="flex items-center gap-2 font-mono text-xs text-pear tracking-[0.06em] mb-4">
@@ -174,10 +164,13 @@ export default function DocsPage() {
           <p className="text-[16px] text-muted leading-relaxed max-w-[620px] mb-6">
             Otter ships as a pip package. Load it, configure parameters, and query predictions — fully local, no server required.
           </p>
-          <pre className="bg-panel border border-line p-[18px] px-[20px] font-mono text-[12.5px] leading-[1.7] text-paper overflow-x-auto">
-            <span className="text-muted font-bold"># install</span>{"\n"}
-            pip install otter-chess
-          </pre>
+          <div className="relative">
+            <pre className="bg-panel border border-line p-[18px] px-[20px] font-mono text-[12.5px] leading-[1.7] text-paper overflow-x-auto">
+              <span className="text-muted font-bold"># install</span>{"\n"}
+              pip install otter-chess
+            </pre>
+            <CopyCodeButton />
+          </div>
         </section>
 
         {/* Quickstart */}
@@ -186,21 +179,24 @@ export default function DocsPage() {
           <p className="text-[14px] leading-[1.75] text-muted mb-4 max-w-[620px]">
             Initialize the model, pass it a position (FEN), game history list, rating level, time control format, and remaining clock fraction to receive skill-conditioned and time-aware predictions.
           </p>
-          <pre className="bg-panel border border-line p-[18px] px-[20px] font-mono text-[12.5px] leading-[1.7] text-paper overflow-x-auto">
-            <span className="text-pear">from</span> otter <span className="text-pear">import</span> OtterModel{"\n"}{"\n"}
-            <span className="text-muted"># Initializing OtterModel loads the cached model weights automatically</span>{"\n"}
-            model = OtterModel(device=<span className="text-pear-deep">"cpu"</span>){"\n"}{"\n"}
-            result = model.predict({"\n"}
-            &nbsp;&nbsp;&nbsp;&nbsp;fen=<span className="text-pear-deep">"r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3"</span>,{"\n"}
-            &nbsp;&nbsp;&nbsp;&nbsp;player_elo=<span className="text-pear">1600</span>,          <span className="text-muted"># target active rating bracket</span>{"\n"}
-            &nbsp;&nbsp;&nbsp;&nbsp;opponent_elo=<span className="text-pear">1500</span>,        <span className="text-muted"># target opponent rating bracket</span>{"\n"}
-            &nbsp;&nbsp;&nbsp;&nbsp;history_moves=[<span className="text-pear-deep">"e2e4"</span>, <span className="text-pear-deep">"e7e5"</span>, <span className="text-pear-deep">"g1f3"</span>, <span className="text-pear-deep">"b8c6"</span>], <span className="text-muted"># preceding moves</span>{"\n"}
-            &nbsp;&nbsp;&nbsp;&nbsp;time_control=<span className="text-pear-deep">"600+0"</span>,       <span className="text-muted"># rapid base + increment format</span>{"\n"}
-            &nbsp;&nbsp;&nbsp;&nbsp;time_remaining=<span className="text-pear">480</span>         <span className="text-muted"># clock time in seconds (fraction auto-calculated)</span>{"\n"}
-            ){"\n"}{"\n"}
-            <span className="text-pear">print</span>(result[<span className="text-pear-deep">"win_probability"</span>])   <span className="text-muted"># Win evaluation between -1 and +1</span>{"\n"}
-            <span className="text-pear">print</span>(result[<span className="text-pear-deep">"moves"</span>][<span className="text-pear">0</span>][<span className="text-pear-deep">"move"</span>])  <span className="text-muted"># e.g., "f1b5" (Ruy Lopez)</span>
-          </pre>
+          <div className="relative">
+            <pre className="bg-panel border border-line p-[18px] px-[20px] font-mono text-[12.5px] leading-[1.7] text-paper overflow-x-auto">
+              <span className="text-pear">from</span> otter <span className="text-pear">import</span> OtterModel{"\n"}{"\n"}
+              <span className="text-muted"># Initializing OtterModel loads the cached model weights automatically</span>{"\n"}
+              model = OtterModel(device=<span className="text-pear-deep">"cpu"</span>){"\n"}{"\n"}
+              result = model.predict({"\n"}
+              &nbsp;&nbsp;&nbsp;&nbsp;fen=<span className="text-pear-deep">"r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3"</span>,{"\n"}
+              &nbsp;&nbsp;&nbsp;&nbsp;player_elo=<span className="text-pear">1600</span>,          <span className="text-muted"># target active rating bracket</span>{"\n"}
+              &nbsp;&nbsp;&nbsp;&nbsp;opponent_elo=<span className="text-pear">1500</span>,        <span className="text-muted"># target opponent rating bracket</span>{"\n"}
+              &nbsp;&nbsp;&nbsp;&nbsp;history_moves=[<span className="text-pear-deep">"e2e4"</span>, <span className="text-pear-deep">"e7e5"</span>, <span className="text-pear-deep">"g1f3"</span>, <span className="text-pear-deep">"b8c6"</span>], <span className="text-muted"># preceding moves</span>{"\n"}
+              &nbsp;&nbsp;&nbsp;&nbsp;time_control=<span className="text-pear-deep">"600+0"</span>,       <span className="text-muted"># rapid base + increment format</span>{"\n"}
+              &nbsp;&nbsp;&nbsp;&nbsp;time_remaining=<span className="text-pear">480</span>         <span className="text-muted"># clock time in seconds (fraction auto-calculated)</span>{"\n"}
+              ){"\n"}{"\n"}
+              <span className="text-pear">print</span>(result[<span className="text-pear-deep">"win_probability"</span>])   <span className="text-muted"># Win evaluation between -1 and +1</span>{"\n"}
+              <span className="text-pear">print</span>(result[<span className="text-pear-deep">"moves"</span>][<span className="text-pear">0</span>][<span className="text-pear-deep">"move"</span>])  <span className="text-muted"># e.g., "f1b5" (Ruy Lopez)</span>
+            </pre>
+            <CopyCodeButton />
+          </div>
         </section>
 
         {/* Model card */}
@@ -317,21 +313,24 @@ export default function DocsPage() {
           <p className="text-[14px] leading-[1.75] text-muted mb-4 max-w-[620px]">
             To load and run the model in your JavaScript code:
           </p>
-          <pre className="bg-panel border border-line p-[18px] px-[20px] font-mono text-[12.5px] leading-[1.7] text-paper overflow-x-auto">
-            <span className="text-pear">import</span> * <span className="text-pear">as</span> ort <span className="text-pear">from</span> <span className="text-pear-deep">'onnxruntime-web'</span>;{"\n"}{"\n"}
-            <span className="text-muted">// Create an inference session with WebGPU acceleration</span>{"\n"}
-            <span className="text-pear">const</span> session = <span className="text-pear">await</span> ort.InferenceSession.create(<span className="text-pear-deep">'/path/to/policy_model.onnx'</span>, {"{"}{"\n"}
-            &nbsp;&nbsp;executionProviders: [<span className="text-pear-deep">'webgpu'</span>, <span className="text-pear-deep">'wasm'</span>]{"\n"}
-            {"}"});{"\n"}{"\n"}
-            <span className="text-muted">// Feed active elo, opponent elo, board state, move history, etc.</span>{"\n"}
-            <span className="text-pear">const</span> feeds = {"{"}{"\n"}
-            &nbsp;&nbsp;board: <span className="text-pear">new</span> ort.Tensor(<span className="text-pear-deep">'float32'</span>, boardData, [1, 18, 8, 8]),{"\n"}
-            &nbsp;&nbsp;history_ids: <span className="text-pear">new</span> ort.Tensor(<span className="text-pear-deep">'int64'</span>, historyIds, [1, 20]),{"\n"}
-            &nbsp;&nbsp;active_elo: <span className="text-pear">new</span> ort.Tensor(<span className="text-pear-deep">'int64'</span>, [activeEloBucket], [1]),{"\n"}
-            &nbsp;&nbsp;<span className="text-muted">... // and other required inputs</span>{"\n"}
-            {"}"};{"\n"}{"\n"}
-            <span className="text-pear">const</span> results = <span className="text-pear">await</span> session.run(feeds);
-          </pre>
+          <div className="relative">
+            <pre className="bg-panel border border-line p-[18px] px-[20px] font-mono text-[12.5px] leading-[1.7] text-paper overflow-x-auto">
+              <span className="text-pear">import</span> * <span className="text-pear">as</span> ort <span className="text-pear">from</span> <span className="text-pear-deep">'onnxruntime-web'</span>;{"\n"}{"\n"}
+              <span className="text-muted">// Create an inference session with WebGPU acceleration</span>{"\n"}
+              <span className="text-pear">const</span> session = <span className="text-pear">await</span> ort.InferenceSession.create(<span className="text-pear-deep">'/path/to/policy_model.onnx'</span>, {"{"}{"\n"}
+              &nbsp;&nbsp;executionProviders: [<span className="text-pear-deep">'webgpu'</span>, <span className="text-pear-deep">'wasm'</span>]{"\n"}
+              {"}"});{"\n"}{"\n"}
+              <span className="text-muted">// Feed active elo, opponent elo, board state, move history, etc.</span>{"\n"}
+              <span className="text-pear">const</span> feeds = {"{"}{"\n"}
+              &nbsp;&nbsp;board: <span className="text-pear">new</span> ort.Tensor(<span className="text-pear-deep">'float32'</span>, boardData, [1, 18, 8, 8]),{"\n"}
+              &nbsp;&nbsp;history_ids: <span className="text-pear">new</span> ort.Tensor(<span className="text-pear-deep">'int64'</span>, historyIds, [1, 20]),{"\n"}
+              &nbsp;&nbsp;active_elo: <span className="text-pear">new</span> ort.Tensor(<span className="text-pear-deep">'int64'</span>, [activeEloBucket], [1]),{"\n"}
+              &nbsp;&nbsp;<span className="text-muted">... // and other required inputs</span>{"\n"}
+              {"}"};{"\n"}{"\n"}
+              <span className="text-pear">const</span> results = <span className="text-pear">await</span> session.run(feeds);
+            </pre>
+            <CopyCodeButton />
+          </div>
         </section>
 
         {/* Input / output formats */}

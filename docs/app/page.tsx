@@ -4,7 +4,7 @@ export default function HomePage() {
   return (
     <div className="flex-grow flex flex-col justify-between">
       {/* Hero Section */}
-      <section className="px-[56px] py-[90px] max-w-[1200px] mx-auto w-full">
+      <section className="px-6 sm:px-10 lg:px-[56px] py-14 sm:py-20 lg:py-[90px] max-w-[1200px] mx-auto w-full">
         <div className="font-mono text-[12px] text-pear tracking-[0.06em] mb-[22px] flex items-center gap-[9px]">
           <span className="border border-pear text-pear-deep px-[7px] py-[2px] font-medium leading-none select-none">
             A1
@@ -13,7 +13,7 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] gap-[64px] items-center">
           <div>
-            <h1 className="font-space font-medium text-[62px] leading-[1.05] tracking-tight text-paper">
+            <h1 className="font-space font-medium text-[38px] sm:text-[48px] lg:text-[62px] leading-[1.05] tracking-tight text-paper">
               A chess engine <em className="not-italic text-pear font-normal italic">that plays like you.</em>
             </h1>
             <p className="text-[16.5px] leading-[1.7] text-muted max-w-[460px] mt-[24px]">
@@ -52,7 +52,7 @@ export default function HomePage() {
       </section>
 
       {/* Block A2 — What Otter does */}
-      <section className="max-w-[1200px] mx-auto w-full px-[56px] py-[76px] border-t border-line">
+      <section className="max-w-[1200px] mx-auto w-full px-6 sm:px-10 lg:px-[56px] py-12 sm:py-16 lg:py-[76px] border-t border-line">
         <div className="font-mono text-[11.5px] text-muted tracking-[0.05em] mb-[18px]">
           A2 — WHAT OTTER DOES
         </div>
@@ -156,7 +156,7 @@ export default function HomePage() {
       </section>
 
       {/* Block A3 — Resources */}
-      <section className="max-w-[1200px] mx-auto w-full px-[56px] py-[76px] border-t border-line">
+      <section className="max-w-[1200px] mx-auto w-full px-6 sm:px-10 lg:px-[56px] py-12 sm:py-16 lg:py-[76px] border-t border-line">
         <div className="font-mono text-[11.5px] text-muted tracking-[0.05em] mb-[18px]">
           A3 — RESOURCES
         </div>
@@ -215,7 +215,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="max-w-[1200px] mx-auto w-full px-[56px] pb-[56px] pt-[32px] flex justify-between font-mono text-[11px] text-muted">
+      <footer className="max-w-[1200px] mx-auto w-full px-6 sm:px-10 lg:px-[56px] pb-10 sm:pb-[56px] pt-[32px] flex flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-between font-mono text-[11px] text-muted">
         <span>© 2026 PeargentLabs</span>
         <span>Otter · v1.0 · released for research use</span>
       </footer>

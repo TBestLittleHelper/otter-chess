@@ -26,6 +26,8 @@ The model features **15.3M parameters** and is trained jointly on three objectiv
 
 ```text
 otter-chess/
+├── .github/
+│   └── workflows/         # CI (lint/test) and PyPI publish (trusted publishing)
 ├── pyproject.toml         # Package definition and dependencies
 ├── LICENSE                # MIT License
 ├── CITATION.cff           # Citation metadata
@@ -36,18 +38,23 @@ otter-chess/
 │   └── package.json       # Web project dependencies
 ├── data_pipeline/         # Rust: PGN processing pipeline
 │   ├── Cargo.toml         # Cargo configuration
+│   ├── README.md          # Build & CLI usage
 │   └── src/main.rs        # Exporter to convert PGN -> Parquet
+├── data/
+│   └── README.md          # Parquet schema & Elo band mapping (actual data is gitignored)
 ├── scripts/               # Training & validation scripts (for reference)
 │   ├── train.py           # Model training loop
 │   ├── data_loader.py     # Fastchess parquet streaming data loader
 │   ├── inference.py       # Command line inference runner
-│   └── evaluate.py        # Standalone validation evaluator
-└── src/
-    └── otter/             # Core library package code
-        ├── __init__.py    # Top-level API exports
-        ├── api.py         # OtterModel class (resolving weights & predicting)
-        ├── model.py       # PyTorch model components
-        └── vocab/         # Pre-built vocabulary mappings
+│   ├── evaluate.py        # Standalone validation evaluator
+│   └── export_onnx.py     # Exports the model to ONNX for browser inference
+├── src/
+│   └── otter/             # Core library package code
+│       ├── __init__.py    # Top-level API exports
+│       ├── api.py         # OtterModel class (resolving weights & predicting)
+│       ├── model.py       # PyTorch model components
+│       └── vocab/         # Pre-built vocabulary mappings
+└── tests/                 # pytest suite for src/otter
 ```
 
 ---
@@ -178,11 +185,11 @@ cargo build --release
 ```
 
 ### 2. Run the Exporter
-Run the binary on a PGN file. This filters rapid games, calculates player Elo brackets, and exports partitioned Parquet files directly to the target `data/` directory:
+Run the binary on a directory of `YYYY-MM.pgn.zst` Lichess dumps. This filters rapid games, calculates player Elo brackets, and exports partitioned Parquet files directly to the target `data/` directory:
 ```bash
-./target/release/data_pipeline --pgn /path/to/lichess_db_standard_rated.pgn --out-dir ../data
+./target/release/otter_pipeline /path/to/lichess_dumps ../data
 ```
-Refer to [data/README.md](data/README.md) for the exact folder structures and Parquet schemas.
+Refer to [data_pipeline/README.md](data_pipeline/README.md) for full CLI details and [data/README.md](data/README.md) for the exact folder structures and Parquet schemas.
 
 ---
 

@@ -1,6 +1,0 @@
-numpy
-pyarrow
-python-chess
-wandb
-fastchess
-torch

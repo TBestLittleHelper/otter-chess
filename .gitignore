@@ -23,10 +23,19 @@ checkpoints/
 # Wandb logs & run data
 wandb/
 
+# Rust build artifacts
+target/
+
+# Stray Next.js output (docs/ has its own .gitignore for its build artifacts)
+web/
+
+.claude
+
 # Local configuration / caches
 .cache/
 .pyrefly/
 .ipynb_checkpoints/
+.pytest_cache/
 
 # OS specific files
 .DS_Store
