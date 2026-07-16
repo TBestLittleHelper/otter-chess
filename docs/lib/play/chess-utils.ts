@@ -188,6 +188,26 @@ export const getIncrementSeconds = (tc: string): number => {
   }
 };
 
+// Analyze mode's three selectable time formats, mapped to a base+increment
+// time-control string in the same "seconds+seconds" shape used elsewhere
+// (see getBaseSeconds/getIncrementSeconds below) — chosen so each format
+// resolves to a distinct tc bucket in the model's time-control conditioning.
+export const ANALYZE_TIME_FORMATS: Record<'blitz' | 'rapid' | 'classical', string> = {
+  blitz: '300+0',
+  rapid: '600+0',
+  classical: '1800+0',
+};
+
+export const timeFormatToTc = (format: 'blitz' | 'rapid' | 'classical'): string =>
+  ANALYZE_TIME_FORMATS[format];
+
+// mm:ss display for a remaining-time slider.
+export const formatClock = (totalSeconds: number): string => {
+  const m = Math.floor(totalSeconds / 60);
+  const s = Math.floor(totalSeconds % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+};
+
 // Helper to compute expected human think time based on predictions, clock, and TC
 export const getExpectedHumanTime = (preds: PredictedMove[], tcStr: string, timeLeft: number): number => {
   if (!preds || preds.length === 0) return 3.0;

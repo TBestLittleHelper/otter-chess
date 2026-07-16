@@ -18,6 +18,10 @@ export function useRatingCurve(deps: {
   historyMoves: string[];
   analyzeWhiteElo: number;
   analyzeBlackElo: number;
+  analyzeHistoryK: number;
+  analyzeTimeFormat: 'blitz' | 'rapid' | 'classical';
+  analyzeWhiteTime: number;
+  analyzeBlackTime: number;
   runModelInferenceAtElo: (c: Chess, history: string[], activeEloBucket: number) => Promise<PredictedMove[] | null>;
   ensureBgStockfishWorker: () => Promise<Worker | null>;
   evaluatePositionOnce: (worker: Worker, fen: string, depth: number) => Promise<number | undefined>;
@@ -30,6 +34,10 @@ export function useRatingCurve(deps: {
     historyMoves,
     analyzeWhiteElo,
     analyzeBlackElo,
+    analyzeHistoryK,
+    analyzeTimeFormat,
+    analyzeWhiteTime,
+    analyzeBlackTime,
     runModelInferenceAtElo,
     ensureBgStockfishWorker,
     evaluatePositionOnce,
@@ -229,8 +237,9 @@ export function useRatingCurve(deps: {
     // The opponent's bracket (whichever slider isn't the side being swept)
     // changes the sweep's results for the same FEN, so it has to be part
     // of the cache key — otherwise moving the sliders after a position was
-    // already swept once would keep showing the stale numbers.
-    const fen = `${c.fen()}|${analyzeWhiteElo}|${analyzeBlackElo}`;
+    // already swept once would keep showing the stale numbers. Same for the
+    // history-window and time-control conditioning.
+    const fen = `${c.fen()}|${analyzeWhiteElo}|${analyzeBlackElo}|${analyzeHistoryK}|${analyzeTimeFormat}|${analyzeWhiteTime}|${analyzeBlackTime}`;
 
     const cached = ratingCurveCacheRef.current.get(fen);
     if (cached) {
@@ -270,7 +279,7 @@ export function useRatingCurve(deps: {
     }, 400);
     return () => clearTimeout(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAnalyzeMode, game, historyMoves, modelLoaded, analyzeWhiteElo, analyzeBlackElo]);
+  }, [isAnalyzeMode, game, historyMoves, modelLoaded, analyzeWhiteElo, analyzeBlackElo, analyzeHistoryK, analyzeTimeFormat, analyzeWhiteTime, analyzeBlackTime]);
 
   return {
     ratingCurveData,

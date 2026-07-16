@@ -27,7 +27,7 @@ export default function RatingChart({
   // each curve stays visually comparable across different positions
   // instead of the axis jumping around.
   const maxY = 100;
-  const chartW = 380, chartH = 195, padL = 44, padB = 20, padT = 8, padR = 40;
+  const chartW = 380, chartH = 280, padL = 44, padB = 20, padT = 8, padR = 40;
   const plotW = chartW - padL - padR;
   const plotH = chartH - padT - padB;
   const baseline = chartH - padB;
@@ -67,8 +67,8 @@ export default function RatingChart({
   };
 
   return (
-    <div className="pt-4 lg:pt-[26px] flex-grow flex flex-col min-h-0 lg:max-h-[320px]">
-      <div className="flex items-center justify-between gap-2 flex-wrap mb-2 shrink-0">
+    <div className="flex-grow flex flex-col min-h-0 lg:max-h-[460px]">
+      <div className="flex items-center justify-between gap-2 flex-wrap mb-3 shrink-0">
         <span className="block-label font-mono text-[12px] text-pear tracking-[0.12em] uppercase font-bold flex items-center gap-1.5">
           Moves by Rating
           {ratingCurveLoading && (
@@ -87,7 +87,7 @@ export default function RatingChart({
           data — the graph must never disappear, whether that's on first
           load before any sweep has finished, or between positions. */}
       {(
-        <div className="relative flex-grow min-h-[90px]">
+        <div className="relative flex-grow min-h-[150px]">
           <svg
             viewBox={`0 0 ${chartW} ${chartH}`}
             preserveAspectRatio="xMidYMin meet"

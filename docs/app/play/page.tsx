@@ -23,6 +23,7 @@ import {
   getBaseSeconds,
   getIncrementSeconds,
   getExpectedHumanTime,
+  timeFormatToTc,
 } from '@/lib/play/chess-utils';
 import { useStockfish } from '@/hooks/play/useStockfish';
 import { useOtterWorker } from '@/hooks/play/useOtterWorker';
@@ -134,6 +135,16 @@ export default function PlayPage() {
   // two sliders at the top of the Analyze sidebar.
   const [analyzeWhiteElo, setAnalyzeWhiteElo] = useState<number>(1500);
   const [analyzeBlackElo, setAnalyzeBlackElo] = useState<number>(1500);
+
+  // Analyze mode's history-window (k) and time-control conditioning — same
+  // reasoning as the rating brackets above: Analyze mode has no live match
+  // clock or config to read a history length / time control from, so these
+  // get their own sliders instead of silently reusing the (possibly stale)
+  // Challenge Otter match state.
+  const [analyzeHistoryK, setAnalyzeHistoryK] = useState<number>(20);
+  const [analyzeTimeFormat, setAnalyzeTimeFormat] = useState<'blitz' | 'rapid' | 'classical'>('rapid');
+  const [analyzeWhiteTime, setAnalyzeWhiteTime] = useState<number>(600);
+  const [analyzeBlackTime, setAnalyzeBlackTime] = useState<number>(600);
 
   // Analysis Mode States
   const [isAnalyzeMode, setIsAnalyzeMode] = useState<boolean>(false);
@@ -332,14 +343,25 @@ export default function PlayPage() {
     }
   }, [playerElo, opponentElo, timeControl, clockFraction, modelLoaded]);
 
-  // Same, but for Analyze mode's own rating-bracket sliders — refreshes
-  // the Otter · Human panel immediately as either slider moves, instead of
-  // waiting for the next move/navigation to pick up the new brackets.
+  // Same, but for Analyze mode's own rating-bracket, history-window, and
+  // time-control sliders — refreshes the Otter · Human panel immediately as
+  // any of them move, instead of waiting for the next move/navigation to
+  // pick up the new conditioning.
   useEffect(() => {
     if (game && modelLoaded && isAnalyzeMode) {
       runModelInference(game, historyMoves);
     }
-  }, [analyzeWhiteElo, analyzeBlackElo, isAnalyzeMode, modelLoaded]);
+  }, [analyzeWhiteElo, analyzeBlackElo, analyzeHistoryK, analyzeTimeFormat, analyzeWhiteTime, analyzeBlackTime, isAnalyzeMode, modelLoaded]);
+
+  // Switching time formats resets both clocks to a full bar for the new
+  // format, rather than carrying over a raw-second value that wouldn't make
+  // sense against the new base (e.g. "550s left" in Classical right after
+  // switching from Blitz's 300s base).
+  useEffect(() => {
+    const base = getBaseSeconds(timeFormatToTc(analyzeTimeFormat));
+    setAnalyzeWhiteTime(base);
+    setAnalyzeBlackTime(base);
+  }, [analyzeTimeFormat]);
 
   // Real-time ticking clock loop. Reads gameRef instead of closing over
   // `game` directly (and doesn't list `game` as a dependency), so the
@@ -1832,9 +1854,13 @@ export default function PlayPage() {
 
       const historyIds = new BigInt64Array(20);
       const historyMask = new Uint8Array(20);
-      const k = 20;
+      // How far back the model gets to see — Analyze mode's k slider (1-20),
+      // or the full window everywhere else. Truncating k right-aligns fewer
+      // moves inside the same fixed 20-slot buffer rather than shrinking it,
+      // so slots before startIdx just stay masked out.
+      const k = isAnalyzeMode ? analyzeHistoryK : 20;
       const windowMoves = canonicalHistory.slice(-k);
-      const startIdx = k - windowMoves.length;
+      const startIdx = 20 - windowMoves.length;
 
       for (let i = 0; i < windowMoves.length; i++) {
         const move = windowMoves[i];
@@ -1883,9 +1909,16 @@ export default function PlayPage() {
           return 4;
         }
       };
-      const timeControlBucket = tcToBucket(timeControl);
-      const activeTimeRemaining = c.turn() === playerColor ? playerTime : otterTime;
-      const baseSec = getBaseSeconds(timeControl);
+      // Analyze mode has no live match clock/config, so it conditions on
+      // its own time-format toggle + white/black remaining-time sliders
+      // instead of the Challenge Otter match's timeControl/playerTime/
+      // otterTime.
+      const effectiveTimeControl = isAnalyzeMode ? timeFormatToTc(analyzeTimeFormat) : timeControl;
+      const timeControlBucket = tcToBucket(effectiveTimeControl);
+      const activeTimeRemaining = isAnalyzeMode
+        ? (c.turn() === 'w' ? analyzeWhiteTime : analyzeBlackTime)
+        : (c.turn() === playerColor ? playerTime : otterTime);
+      const baseSec = getBaseSeconds(effectiveTimeControl);
       const normalizedClockFraction = baseSec > 0 ? activeTimeRemaining / baseSec : 0.5;
 
       // 5. Run on the Otter worker (off the main thread)
@@ -2046,9 +2079,9 @@ export default function PlayPage() {
       }
       const historyIds = new BigInt64Array(20);
       const historyMask = new Uint8Array(20);
-      const k = 20;
+      const k = analyzeHistoryK;
       const windowMoves = canonicalHistory.slice(-k);
-      const startIdx = k - windowMoves.length;
+      const startIdx = 20 - windowMoves.length;
       for (let i = 0; i < windowMoves.length; i++) {
         const token = historyMoveToIdRef.current[windowMoves[i]] || 0;
         historyIds[startIdx + i] = BigInt(token);
@@ -2081,9 +2114,10 @@ export default function PlayPage() {
           return 4;
         }
       };
-      const timeControlBucket = tcToBucket(timeControl);
-      const activeTimeRemaining = c.turn() === playerColor ? playerTime : otterTime;
-      const baseSec = getBaseSeconds(timeControl);
+      const effectiveTimeControl = timeFormatToTc(analyzeTimeFormat);
+      const timeControlBucket = tcToBucket(effectiveTimeControl);
+      const activeTimeRemaining = c.turn() === 'w' ? analyzeWhiteTime : analyzeBlackTime;
+      const baseSec = getBaseSeconds(effectiveTimeControl);
       const normalizedClockFraction = baseSec > 0 ? activeTimeRemaining / baseSec : 0.5;
 
       const { policyLogits } = await callOtterWorker('sweep', {
@@ -2126,6 +2160,10 @@ export default function PlayPage() {
     historyMoves,
     analyzeWhiteElo,
     analyzeBlackElo,
+    analyzeHistoryK,
+    analyzeTimeFormat,
+    analyzeWhiteTime,
+    analyzeBlackTime,
     runModelInferenceAtElo,
     ensureBgStockfishWorker,
     evaluatePositionOnce,
@@ -2298,6 +2336,18 @@ export default function PlayPage() {
         livePgnInput={livePgnInput}
         handlePgnInputChange={handlePgnInputChange}
         playerRating={playerRating}
+        analyzeWhiteElo={analyzeWhiteElo}
+        setAnalyzeWhiteElo={setAnalyzeWhiteElo}
+        analyzeBlackElo={analyzeBlackElo}
+        setAnalyzeBlackElo={setAnalyzeBlackElo}
+        analyzeHistoryK={analyzeHistoryK}
+        setAnalyzeHistoryK={setAnalyzeHistoryK}
+        analyzeTimeFormat={analyzeTimeFormat}
+        setAnalyzeTimeFormat={setAnalyzeTimeFormat}
+        analyzeWhiteTime={analyzeWhiteTime}
+        setAnalyzeWhiteTime={setAnalyzeWhiteTime}
+        analyzeBlackTime={analyzeBlackTime}
+        setAnalyzeBlackTime={setAnalyzeBlackTime}
       />
 
       {/* COLUMN 2 (MIDDLE): Chessboard Column */}
@@ -2334,10 +2384,6 @@ export default function PlayPage() {
           <AnalyzeSidebar
             game={game}
             exitAnalyzeMode={exitAnalyzeMode}
-            analyzeWhiteElo={analyzeWhiteElo}
-            setAnalyzeWhiteElo={setAnalyzeWhiteElo}
-            analyzeBlackElo={analyzeBlackElo}
-            setAnalyzeBlackElo={setAnalyzeBlackElo}
             topMoves={topMoves}
             sfTopMoves={sfTopMoves}
             ratingCurveData={ratingCurveData}
@@ -2352,7 +2398,9 @@ export default function PlayPage() {
             auxCheckProb={auxCheckProb}
             auxMovingPiece={auxMovingPiece}
             auxCapturedPiece={auxCapturedPiece}
-            timeControl={timeControl}
+            analyzeTimeFormat={analyzeTimeFormat}
+            analyzeWhiteTime={analyzeWhiteTime}
+            analyzeBlackTime={analyzeBlackTime}
           />
         ) : isEditorMode ? (
           <EditorSidebar
