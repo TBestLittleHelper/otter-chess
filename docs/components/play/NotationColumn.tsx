@@ -88,7 +88,7 @@ export default function NotationColumn({
   const formatBaseSec = getBaseSeconds(ANALYZE_TIME_FORMATS[analyzeTimeFormat]);
 
   return (
-    <div className="w-full lg:w-[300px] shrink-0 flex flex-col bg-panel min-h-0 divide-y divide-line">
+    <div className="order-3 lg:order-1 border-t border-line lg:border-t-0 w-full lg:w-[300px] shrink-0 flex flex-col bg-panel min-h-0 divide-y divide-line">
       <button
         type="button"
         onClick={() => setMobileNotationOpen((v) => !v)}
@@ -97,7 +97,7 @@ export default function NotationColumn({
         className="lg:hidden flex items-center justify-between p-4 px-6 bg-panel/30 cursor-pointer"
       >
         <span className="block-label font-mono text-[12px] text-pear tracking-[0.12em] uppercase font-bold">
-          {isAnalyzeMode ? `Move History (${analysisMoves.length})` : 'Live Game Notation'}
+          {isAnalyzeMode ? `Analysis Settings · Moves (${analysisMoves.length})` : 'Live Game Notation'}
         </span>
         <span className={`text-muted transition-transform duration-150 ${mobileNotationOpen ? 'rotate-180' : ''}`}>&#8964;</span>
       </button>
@@ -117,7 +117,7 @@ export default function NotationColumn({
                   settings. Defaults to the loaded PGN's WhiteElo/BlackElo
                   headers, or the just-played match's ratings when there's
                   no PGN — see applyDefaultAnalyzeElos in page.tsx. */}
-              <div className="py-4 px-6 space-y-4">
+              <div data-tour="rating-bracket" className="py-4 px-6 space-y-4">
                 <label className="block text-[12px] font-mono font-bold text-pear uppercase tracking-wider">Rating Bracket</label>
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center">
@@ -161,7 +161,7 @@ export default function NotationColumn({
                   same as the live match) get fed into the model's history
                   tensor. Capped at 20, the tensor's fixed slot count (see
                   runModelInference / runModelInferenceAtElo in page.tsx). */}
-              <div className="py-4 px-6 space-y-2.5">
+              <div data-tour="history-window" className="py-4 px-6 space-y-2.5">
                 <div className="flex justify-between items-center">
                   <label className="text-[12px] font-mono font-bold text-pear uppercase tracking-wider">History Window (k)</label>
                   <span className="font-space text-[12px] font-medium text-pear">{analyzeHistoryK} {analyzeHistoryK === 1 ? 'ply' : 'plies'}</span>
@@ -180,27 +180,27 @@ export default function NotationColumn({
               {/* Time control conditioning — Analyze mode has no live
                   clock, so the format + each side's remaining time are
                   picked here instead of read off the Challenge Otter
-                  match state. */}
-              <div className="py-4 px-6 space-y-2.5">
-                <label className="block text-[12px] font-mono font-bold text-pear uppercase tracking-wider">Time Format</label>
-                <div className="flex gap-1.5">
-                  {(['blitz', 'rapid', 'classical'] as const).map((fmt) => (
-                    <button
-                      key={fmt}
-                      onClick={() => setAnalyzeTimeFormat(fmt)}
-                      className={`flex-1 py-1.5 text-[11.5px] font-mono uppercase tracking-[0.02em] font-semibold border rounded-[3px] transition-all cursor-pointer capitalize ${
-                        analyzeTimeFormat === fmt
-                          ? 'border-pear text-pear bg-pear-tint/10'
-                          : 'border-[#7a856f]/40 text-muted hover:border-pear/50 hover:text-paper bg-transparent'
-                      }`}
-                    >
-                      {fmt}
-                    </button>
-                  ))}
+                  match state. Format + both clocks share one data-tour
+                  target so the walkthrough spotlights them as one unit. */}
+              <div data-tour="time-section" className="py-4 px-6 space-y-4">
+                <div className="space-y-2.5">
+                  <label className="block text-[12px] font-mono font-bold text-pear uppercase tracking-wider">Time Format</label>
+                  <div className="flex gap-1.5">
+                    {(['blitz', 'rapid', 'classical'] as const).map((fmt) => (
+                      <button
+                        key={fmt}
+                        onClick={() => setAnalyzeTimeFormat(fmt)}
+                        className={`flex-1 py-1.5 text-[11.5px] font-mono uppercase tracking-[0.02em] font-semibold border rounded-[3px] transition-all cursor-pointer capitalize ${
+                          analyzeTimeFormat === fmt
+                            ? 'border-pear text-pear bg-pear-tint/10'
+                            : 'border-[#7a856f]/40 text-muted hover:border-pear/50 hover:text-paper bg-transparent'
+                        }`}
+                      >
+                        {fmt}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="py-4 px-6 space-y-4">
-                <label className="block text-[12px] font-mono font-bold text-pear uppercase tracking-wider">Time Remaining</label>
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center">
                     <label className="flex items-center gap-2 text-[12px] font-mono font-bold text-muted uppercase tracking-wider">

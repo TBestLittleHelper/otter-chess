@@ -36,17 +36,14 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="bg-pear-tint aspect-square flex items-center justify-center relative w-full rounded-sm">
-            <svg
-              viewBox="0 0 100 100"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-[72%] h-[72%]"
-            >
-              <g fill="none" stroke="var(--pear)" strokeWidth="0.9">
-                <path d="M22 82 L78 82 L74 70 L60 66 L60 55 L68 40 C70 32 66 22 56 18 C50 16 44 18 42 24 L46 26 C44 30 46 34 50 34 L48 40 L34 46 L30 60 L34 66 L26 70 Z" />
-                <circle cx="58" cy="26" r="1.4" fill="var(--pear)" stroke="none" />
-              </g>
-            </svg>
+          <div className="bg-pear-tint aspect-square flex items-center justify-center relative w-full rounded-sm overflow-hidden">
+            <img
+              src="/otter-hero.png"
+              alt="Pixel-art otter pondering a pawn on a chessboard"
+              className="hero-otter-img w-[86%] h-auto select-none pointer-events-none"
+              draggable={false}
+            />
+            <div className="hero-otter-shadow" aria-hidden="true" />
           </div>
         </div>
       </section>

@@ -42,6 +42,44 @@ import ResignConfirmModal from '@/components/play/modals/ResignConfirmModal';
 import SetupModal from '@/components/play/modals/SetupModal';
 import ConfigMatchModal from '@/components/play/modals/ConfigMatchModal';
 import AnalyzeGameModal from '@/components/play/modals/AnalyzeGameModal';
+import Tour, { type TourStep } from '@/components/play/Tour';
+
+// Guided walkthrough for Analyze mode's conditioning controls + output
+// panels — a module-level constant since it's static, so it isn't
+// recreated on every render. Each `target` matches a data-tour attribute
+// in NotationColumn.tsx / AnalyzeSidebar.tsx.
+const ANALYZE_TOUR_STEPS: TourStep[] = [
+  {
+    target: 'rating-bracket',
+    title: 'Rating Bracket',
+    description: "Sets the Elo bucket Otter's predictions are conditioned on for each side. Drag White or Black independently to see how a stronger or weaker player would be expected to move here.",
+  },
+  {
+    target: 'history-window',
+    title: 'History Window (k)',
+    description: 'Controls how many prior plies (up to 20) the model gets to see before predicting the next move. Lower it to test how much Otter leans on recent history versus the raw position.',
+  },
+  {
+    target: 'time-section',
+    title: 'Time Format & Clock',
+    description: "Otter is also conditioned on the time control and how much time is left on the clock. Pick a format and drag the sliders to see how time pressure shifts its predictions.",
+  },
+  {
+    target: 'comparison-table',
+    title: 'Otter vs Stockfish',
+    description: "Side-by-side candidate moves: Otter's human-like predictions on the left, Stockfish's objective best lines (depth 13, no rating cap) on the right.",
+  },
+  {
+    target: 'moves-by-rating',
+    title: 'Moves by Rating',
+    description: "Sweeps Otter's top candidate move across every rating bracket for this exact position, so you can see how the best move shifts — or doesn't — as playing strength increases.",
+  },
+  {
+    target: 'ai-intuition',
+    title: 'Otter AI Intuition',
+    description: "A second, independently-trained output head: Otter's own from/to square guess, plus its subjective evaluation, check probability, and estimated human think time for this position.",
+  },
+];
 
 export default function PlayPage() {
   // Engine & Asset Availability
@@ -135,6 +173,11 @@ export default function PlayPage() {
   // two sliders at the top of the Analyze sidebar.
   const [analyzeWhiteElo, setAnalyzeWhiteElo] = useState<number>(1500);
   const [analyzeBlackElo, setAnalyzeBlackElo] = useState<number>(1500);
+
+  // Analyze mode's guided walkthrough (see components/play/Tour.tsx) —
+  // spotlights each conditioning control / output panel in turn.
+  const [tourActive, setTourActive] = useState<boolean>(false);
+  const [tourStepIdx, setTourStepIdx] = useState<number>(0);
 
   // Analyze mode's history-window (k) and time-control conditioning — same
   // reasoning as the rating brackets above: Analyze mode has no live match
@@ -362,6 +405,36 @@ export default function PlayPage() {
     setAnalyzeWhiteTime(base);
     setAnalyzeBlackTime(base);
   }, [analyzeTimeFormat]);
+
+  // First-time visitors get the guided tour automatically on their first
+  // trip into Analyze mode — a short delay lets the panels finish laying
+  // out so the tour's first spotlight measures the right position. Gated
+  // on a localStorage flag so it only ever fires once per browser; the "?"
+  // button in AnalyzeSidebar's header re-runs it on demand after that.
+  useEffect(() => {
+    if (!isAnalyzeMode) return;
+    let seen = true;
+    try {
+      seen = localStorage.getItem('otter-analyze-tour-seen') === '1';
+    } catch (_) {
+      // localStorage unavailable (e.g. private browsing) — skip auto-tour
+    }
+    if (seen) return;
+    const t = setTimeout(() => {
+      setTourStepIdx(0);
+      setTourActive(true);
+      // The tour's left-panel targets live inside the mobile collapse —
+      // display:none while closed, so the spotlight can't measure them.
+      // No-op on desktop where the panel is always visible.
+      setMobileNotationOpen(true);
+      try {
+        localStorage.setItem('otter-analyze-tour-seen', '1');
+      } catch (_) {
+        // ignore — worst case the tour re-triggers next visit
+      }
+    }, 700);
+    return () => clearTimeout(t);
+  }, [isAnalyzeMode]);
 
   // Real-time ticking clock loop. Reads gameRef instead of closing over
   // `game` directly (and doesn't list `game` as a dependency), so the
@@ -2310,7 +2383,12 @@ export default function PlayPage() {
   };
 
   return (
-    <div className="flex-grow flex flex-col lg:flex-row min-h-0 divide-y lg:divide-y-0 lg:divide-x divide-line lg:h-[calc(100vh-68px)]">
+    // Mobile stacks board-first (order classes): board -> mode sidebar ->
+    // notation/history. Desktop keeps the DOM order as visual order
+    // (notation | board | sidebar). Section separators are explicit
+    // border-t's on the reordered children rather than divide-y, which
+    // follows DOM order and would draw them in the wrong places.
+    <div className="flex-grow flex flex-col lg:flex-row min-h-0 lg:divide-x divide-line lg:h-[calc(100vh-68px)]">
 
       <NotationColumn
         mobileNotationOpen={mobileNotationOpen}
@@ -2377,13 +2455,14 @@ export default function PlayPage() {
       />
 
       {/* COLUMN 3 (RIGHT): Controls & Move History */}
-      <div className="w-full lg:w-[400px] shrink-0 flex flex-col bg-panel min-h-0 divide-y divide-line lg:overflow-y-auto">
+      <div className="order-2 lg:order-3 border-t border-line lg:border-t-0 w-full lg:w-[400px] shrink-0 flex flex-col bg-panel min-h-0 divide-y divide-line lg:overflow-y-auto">
         
         {/* Move History / Lobby Middle Area */}
         {isAnalyzeMode ? (
           <AnalyzeSidebar
             game={game}
             exitAnalyzeMode={exitAnalyzeMode}
+            onStartTour={() => { setTourStepIdx(0); setTourActive(true); setMobileNotationOpen(true); }}
             topMoves={topMoves}
             sfTopMoves={sfTopMoves}
             ratingCurveData={ratingCurveData}
@@ -2595,6 +2674,16 @@ export default function PlayPage() {
             setAnalyzeError(null);
           }}
           loadGameForAnalysis={loadGameForAnalysis}
+        />
+      )}
+
+      {/* ================= ANALYZE MODE: GUIDED TOUR ================= */}
+      {tourActive && isAnalyzeMode && (
+        <Tour
+          steps={ANALYZE_TOUR_STEPS}
+          stepIdx={tourStepIdx}
+          onStepChange={setTourStepIdx}
+          onClose={() => setTourActive(false)}
         />
       )}
 

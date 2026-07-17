@@ -31,7 +31,6 @@ export default function EvalBar({
   isAnalyzeMode: boolean;
   boardPx: number | null;
 }) {
-  const evalBarHeightClasses = "h-[min(calc(92vw-80px),82vh,720px)] lg:h-[min(calc(100vw-760px),82vh,720px)]";
   const colorAtTop = isFlipped;
   const topHeight = colorAtTop ? pct : 100 - pct;
   const topColor = colorAtTop ? color : '#000000';
@@ -39,8 +38,12 @@ export default function EvalBar({
   const pillTop = topHeight;
 
   return (
+    // self-stretch fills the row's height (set by the board wrapper, the
+    // row's tallest item) until the measured boardPx pins an exact inline
+    // height — no viewport-unit fallback, which would overshoot the real
+    // content width/height when a scrollbar is present.
     <div
-      className={`w-6 shrink-0 ${evalBarHeightClasses} relative overflow-visible`}
+      className="w-4 lg:w-6 shrink-0 self-stretch relative overflow-visible"
       style={boardPx !== null ? { height: boardPx } : undefined}
       title={isAnalyzeMode ? title : undefined}
     >

@@ -51,6 +51,21 @@ body {
   color: var(--pear-deep);
 }
 
+/* Homepage hero otter — static image with a soft ground shadow. */
+.hero-otter-img {
+  position: relative;
+  z-index: 1;
+}
+.hero-otter-shadow {
+  position: absolute;
+  bottom: 8%;
+  left: 23%;
+  width: 54%;
+  height: 24px;
+  background: radial-gradient(ellipse at center, rgba(92, 138, 46, 0.35), transparent 70%);
+  filter: blur(7px);
+}
+
 /* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;

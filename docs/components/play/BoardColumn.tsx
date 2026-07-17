@@ -79,17 +79,27 @@ export default function BoardColumn({
     bottomCard = otterColor === topColor ? guestCard : otterCard;
   }
 
-  // The board's own max-size PERMANENTLY reserves room for the eval
-  // bars — one flanking each side (24px bar + 16px gap-4 = 40px per
-  // side, 80px total) — regardless of whether Analyze mode is
-  // currently on. That's what makes the board's size and position
-  // fixed: if the reservation only applied while bars were visible,
-  // the board would resize/shift every time you entered or left
-  // Analyze mode, which is exactly what "never move" rules out.
-  const boardSizeClasses = "w-[min(calc(92vw-80px),82vh,720px)] lg:w-[min(calc(100vw-760px),82vh,720px)]";
+  // The board's row PERMANENTLY reserves room for the eval bars — one
+  // flanking each side — regardless of whether Analyze mode is currently
+  // on. That's what makes the board's size and position fixed: if the
+  // reservation only applied while bars were visible, the board would
+  // resize/shift every time you entered or left Analyze mode, which is
+  // exactly what "never move" rules out.
+  //
+  // Mobile sizing is flex-derived (flex-1 inside a w-full row), NOT
+  // 100vw-based: vw units include the vertical scrollbar, so on a
+  // vertically-scrolling page in browsers with classic scrollbars a
+  // vw formula overshoots the real content width and causes horizontal
+  // overflow. Desktop keeps the vw formula — the lg layout is height-
+  // capped so the page never grows a vertical scrollbar there.
+  const desktopBoardW = "lg:w-[min(calc(100vw-760px),82vh,720px)]";
+  // Cards match the measured board width exactly once boardPx lands
+  // (a frame after mount); until then they fall back to full width.
+  const cardStyle = boardPx !== null ? { width: boardPx } : undefined;
+  const cardClasses = `w-full max-w-[min(80vh,720px)] ${desktopBoardW}`;
 
   const renderCard = (card: Card) => (
-    <div key={card.key} className={`${boardSizeClasses} flex justify-between items-center px-4 py-2 border border-[#7a856f]/30 bg-panel/30 rounded-[3px]`}>
+    <div key={card.key} style={cardStyle} className={`${cardClasses} flex justify-between items-center px-4 py-2 border border-[#7a856f]/30 bg-panel/30 rounded-[3px]`}>
       <div className="flex items-center gap-2.5">
         <span className={`w-3 h-3 rounded-full border border-[#7a856f]/40 ${card.dotBlack ? 'bg-[#1a1b15]' : 'bg-[#FFFFFF]'}`} />
         <div className="font-mono text-xs text-paper font-semibold">
@@ -113,7 +123,7 @@ export default function BoardColumn({
   );
 
   return (
-    <div className="flex-grow flex flex-col items-center justify-center bg-bg relative min-h-0 p-4 md:p-6 space-y-3.5">
+    <div className="order-1 lg:order-2 flex-grow flex flex-col items-center justify-center bg-bg relative min-h-0 px-4 pt-12 pb-5 lg:p-6 space-y-3.5">
 
       {/* Flip Board Button (top-right, 10px from sidebar) */}
       <button
@@ -131,7 +141,7 @@ export default function BoardColumn({
           rendered — just empty outside Analyze mode — so the row's
           total width (and therefore the board's centered position)
           never changes when Analyze mode toggles their content. */}
-      <div className="flex items-center gap-4 relative">
+      <div className="flex items-center justify-center gap-2 lg:gap-4 relative w-full lg:w-auto">
         <EvalBar
           pct={otterWinPct}
           color="#7CB342"
@@ -143,10 +153,12 @@ export default function BoardColumn({
         />
 
         {/* Chessboard Sizing Wrapper — CSS-driven responsive size, observed but
-            never overridden by JS, so it keeps tracking the viewport. */}
+            never overridden by JS, so it keeps tracking its container. On
+            mobile flex-1 hands it exactly the row width left over after the
+            bars and gaps — no viewport units involved. */}
         <div
           ref={boardWrapperRef}
-          className={`${boardSizeClasses} shrink-0 aspect-square flex items-center justify-center`}
+          className={`flex-1 min-w-0 max-w-[min(80vh,720px)] lg:flex-none lg:max-w-none ${desktopBoardW} aspect-square flex items-center justify-center`}
         >
           {/* Chessboard View Container — pinned to a multiple of 8px so
               chessground's own crisp-square snapping is a no-op (see 1b above). */}

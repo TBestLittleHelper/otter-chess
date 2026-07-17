@@ -14,7 +14,11 @@ export default function StatusToast({
   onSetupClick: () => void;
 }) {
   return (
-    <div className="static lg:fixed m-4 lg:m-0 lg:bottom-6 lg:right-6 z-40 flex items-center gap-3 p-3.5 px-4 bg-panel border border-[#7a856f]/35 rounded-[4px] shadow-2xl text-paper text-xs font-mono lg:max-w-sm transition-all duration-300 transform select-none">
+    // order-4: on mobile this renders in-flow inside the /play flex column,
+    // whose children are explicitly ordered (board 1, sidebar 2, notation 3)
+    // — without an order of its own it would default to 0 and jump above
+    // the board. On lg it's fixed-positioned, where order is irrelevant.
+    <div className="order-4 static lg:fixed m-4 lg:m-0 lg:bottom-6 lg:right-6 z-40 flex items-center gap-3 p-3.5 px-4 bg-panel border border-[#7a856f]/35 rounded-[4px] shadow-2xl text-paper text-xs font-mono lg:max-w-sm transition-all duration-300 transform select-none">
       {/* Status Indicator Dot */}
       <span className="relative flex h-2 w-2">
         {(!enginesReady || checkingAvailability) && (

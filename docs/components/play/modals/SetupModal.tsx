@@ -24,8 +24,8 @@ export default function SetupModal({
   downloadError: string | null;
 }) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-paper/20 backdrop-blur-sm z-50 transition-opacity">
-      <div className="w-full max-w-md p-8 bg-panel border border-[#7a856f]/55 space-y-6 shadow-2xl relative text-paper rounded-[4px]">
+    <div className="fixed inset-0 p-4 flex items-center justify-center bg-paper/20 backdrop-blur-sm z-50 transition-opacity">
+      <div className="w-full max-w-md max-h-[calc(100dvh-32px)] overflow-y-auto p-6 sm:p-8 bg-panel border border-[#7a856f]/55 space-y-6 shadow-2xl relative text-paper rounded-[4px]">
 
         {/* Close button */}
         <button

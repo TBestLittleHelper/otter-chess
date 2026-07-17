@@ -8,6 +8,7 @@ import RatingChart from './RatingChart';
 export default function AnalyzeSidebar({
   game,
   exitAnalyzeMode,
+  onStartTour,
   topMoves,
   sfTopMoves,
   ratingCurveData,
@@ -28,6 +29,7 @@ export default function AnalyzeSidebar({
 }: {
   game: Chess | null;
   exitAnalyzeMode: () => void;
+  onStartTour: () => void;
   topMoves: PredictedMove[];
   sfTopMoves: { san: string; evalCp: number; from: string; to: string }[];
   ratingCurveData: RatingCurveSeries[];
@@ -56,17 +58,26 @@ export default function AnalyzeSidebar({
             Game Review
           </h3>
         </div>
-        <button
-          onClick={exitAnalyzeMode}
-          className="font-mono text-[10px] text-rose-500 uppercase font-bold hover:underline cursor-pointer border border-red-500/20 px-2 py-0.5 rounded hover:bg-rose-500/5 transition-all"
-        >
-          Exit
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onStartTour}
+            title="Take a guided tour of this panel"
+            className="w-5 h-5 rounded-full border border-[#7a856f]/50 text-muted hover:text-pear hover:border-pear flex items-center justify-center text-[10px] font-bold font-mono transition-all cursor-pointer"
+          >
+            ?
+          </button>
+          <button
+            onClick={exitAnalyzeMode}
+            className="font-mono text-[10px] text-rose-500 uppercase font-bold hover:underline cursor-pointer border border-red-500/20 px-2 py-0.5 rounded hover:bg-rose-500/5 transition-all"
+          >
+            Exit
+          </button>
+        </div>
       </div>
 
       {/* Otter vs Stockfish comparison, plus the arrow-colour legend that
           explains the board arrows those two columns drive. */}
-      <div className="py-4 px-6">
+      <div data-tour="comparison-table" className="py-4 px-6">
         <div className="grid grid-cols-2 gap-3">
           <div>
             <div className="text-[12px] font-mono font-bold text-pear uppercase tracking-wide mb-2.5 truncate" title="Otter — human-like predicted moves">
@@ -141,7 +152,7 @@ export default function AnalyzeSidebar({
       </div>
 
       {/* Moves-by-Rating sweep graph */}
-      <div className="py-4 px-6 shrink-0">
+      <div data-tour="moves-by-rating" className="py-4 px-6 shrink-0">
         <RatingChart
           ratingCurveData={ratingCurveData}
           ratingCurveLoading={ratingCurveLoading}
@@ -151,7 +162,7 @@ export default function AnalyzeSidebar({
       </div>
 
       {/* AI Intuition Dashboard */}
-      <div className="py-4 px-6">
+      <div data-tour="ai-intuition" className="py-4 px-6">
         <div className="flex items-center gap-1 mb-2.5 relative group">
           <div className="block-label font-mono text-[12px] text-pear tracking-[0.12em] uppercase font-bold">
             Otter AI Intuition
