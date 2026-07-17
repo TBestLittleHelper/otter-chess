@@ -257,11 +257,11 @@ export default function NotationColumn({
                 FEN / PGN
               </button>
 
-              {/* Move List — a small fixed-height window (its own scroll)
-                  rather than growing unbounded, since this section now
-                  also carries the conditioning sliders above it. */}
+              {/* Move List — a scrollable window with increased height
+                  to display more moves, since this section now also
+                  carries the conditioning sliders above it. */}
               <div className="p-4 px-6 shrink-0">
-                <div className="max-h-[190px] overflow-y-auto pr-1">
+                <div className="max-h-[370px] overflow-y-auto pr-1">
                   {analysisMoves.length > 0 ? (
                     <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[14px] font-mono">
                       {/* A branch played before the very first mainline move
