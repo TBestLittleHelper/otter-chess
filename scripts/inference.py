@@ -21,7 +21,7 @@ POLICY_DIM = 4208
 ELO_BUCKETS = 11
 AUX_DIM = 141
 TIME_CONTROL_BUCKETS = 5
-VOCAB_DIR = os.path.join(os.path.dirname(__file__), "../uci_vocab_full")
+VOCAB_DIR = os.path.join(os.path.dirname(__file__), "vocab")
 
 # ════════════════════════════════════════════════════════════════
 # Model Architecture (Must match train.py exactly)

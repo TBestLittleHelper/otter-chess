@@ -28,7 +28,7 @@ Each `.parquet` file contains Arrow record batches with the following schema:
 | Column Name | Data Type | Description | Example |
 | :--- | :--- | :--- | :--- |
 | `month` | `Utf8` (String) | Month identifier | `"2024-01"` |
-| `elo_band` | `Int64` | Elo band category index (see mapping below) | `5` |
+| `elo_band` | `Int64` | Elo band category index (see mapping below) | `6` |
 | `event` | `Utf8` (String) | Lichess game speed/type category | `"Rated Rapid game"` |
 | `white` | `Utf8` (String) | Username of the White player | `"Hikaru"` |
 | `black` | `Utf8` (String) | Username of the Black player | `"Magnus"` |
@@ -39,7 +39,7 @@ Each `.parquet` file contains Arrow record batches with the following schema:
 | `black_elo` | `Int64` | Black player rating | `2050` |
 | `avg_elo` | `Int64` | Average Elo of white and black | `2075` |
 | `moves_san` | `Utf8` (String) | Space-separated list of SAN moves | `"e4 e5 Nf3 Nc6 Bb5"` |
-| `move_clocks` | `Utf8` (String) | Pipe-separated (`\|`) list of remaining clock times | `"0:10:00\|0:09:58\|0:09:55"` |
+| `move_clocks` | `Utf8` (String) | Pipe-separated (`\|`) list of remaining clock times | `"0:10:00\|0:09:58\|0:09:55\|0:09:50\|0:09:47"` |
 
 ---
 
@@ -66,11 +66,15 @@ The `elo_band` field divides players into 9 separate brackets based on their `av
 Data is generated from raw Lichess PGN dumps (e.g. from `database.lichess.org`).
 
 You can use the Rust conversion pipeline in the main repository under `data_pipeline/`:
-1. Compile the pipeline in release mode: `cargo build --release`.
-2. Run it on a directory of `YYYY-MM.pgn.zst` dumps to extract rapid games and export them
-   directly to partitioned Parquet files:
+1. Navigate to the pipeline directory and compile in release mode:
    ```bash
-   ./target/release/otter_pipeline /path/to/lichess_dumps /path/to/project/data
+   cd data_pipeline
+   cargo build --release
+   ```
+2. Run it on a directory of `YYYY-MM.pgn.zst` dumps to extract rapid games and export them
+   directly to partitioned Parquet files (typically saved to the repo's `data/` folder):
+   ```bash
+   ./target/release/otter_pipeline /path/to/lichess_dumps ../data
    ```
 
 See [`data_pipeline/README.md`](../data_pipeline/README.md) for full CLI details.

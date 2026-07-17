@@ -16,8 +16,8 @@ from torch.utils.data import DataLoader, IterableDataset, get_worker_info
 
 import fastchess
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "../data_cloud")
-VOCAB_DIR = os.path.join(os.path.dirname(__file__), "../uci_vocab_full")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "../data")
+VOCAB_DIR = os.path.join(os.path.dirname(__file__), "vocab")
 BOARD_CHANNELS = 18
 DEFAULT_HISTORY_K = 20
 AUX_DIM = 141
@@ -198,7 +198,7 @@ def board_to_tensor(board: fastchess.Board) -> torch.Tensor:
 
 def parquet_files(data_dir: str, months: Optional[List[str]], elo_bands: Optional[List[int]]) -> List[str]:
     months = months or sorted(
-        path.split("/month=")[1].split("/")[0]
+        path.replace("\\", "/").split("/month=")[1].split("/")[0]
         for path in glob.glob(f"{data_dir}/month=*")
     )
     bands = elo_bands or list(range(9))
