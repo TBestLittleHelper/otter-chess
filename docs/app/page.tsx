@@ -159,7 +159,7 @@ export default function HomePage() {
         </div>
         <div className="flex flex-col">
           <a
-            href="https://github.com"
+            href="https://github.com/PeargentLabs/Otter-Chess"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-baseline justify-between py-[26px] border-t border-line last:border-b last:border-line hover:pl-[10px] transition-all duration-200 cursor-pointer"
@@ -172,7 +172,7 @@ export default function HomePage() {
             </span>
           </a>
           <a
-            href="https://huggingface.co"
+            href="https://huggingface.co/peargentlabs/otter-chess"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-baseline justify-between py-[26px] border-t border-line last:border-b last:border-line hover:pl-[10px] transition-all duration-200 cursor-pointer"
@@ -185,7 +185,7 @@ export default function HomePage() {
             </span>
           </a>
           <a
-            href="https://wandb.ai"
+            href="https://wandb.ai/peargent-ai-labs/Otter/reports/Otter-3M-Run--VmlldzoxNzQxMTY3Nw"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-baseline justify-between py-[26px] border-t border-line last:border-b last:border-line hover:pl-[10px] transition-all duration-200 cursor-pointer"
