@@ -4,6 +4,15 @@ Otter is a skill-conditioned chess move prediction model. It predicts what move 
 
 This repository contains the `otter-chess` Python package, which exposes a clean API for local inference, alongside educational scripts illustrating the model architecture, training process, and validation pipelines.
 
+[![PyPI](https://img.shields.io/pypi/v/otter-chess)](https://pypi.org/project/otter-chess/)
+[![Python](https://img.shields.io/pypi/pyversions/otter-chess)](https://pypi.org/project/otter-chess/)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+- **[Play in your browser](https://peargentlabs.github.io/Otter-Chess/play/)** — run the model client-side with WebGPU
+- **[Model weights](https://huggingface.co/peargentlabs/otter-chess)** — `model.safetensors` and the ONNX export, on Hugging Face
+- **[PyPI package](https://pypi.org/project/otter-chess/)** — `pip install otter-chess`
+- **[Training report](https://api.wandb.ai/links/peargent-ai-labs/3mu4f1jv)** — runs, curves, and metrics on Weights & Biases
+
 ---
 
 ## Model Overview

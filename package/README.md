@@ -9,9 +9,11 @@ The model has 15.3M parameters and reaches 55.70% top-1 move accuracy, compared
 to Maia 2's reported 53.25%, using 34% fewer parameters and 33% less training
 data.
 
-- Repository: https://github.com/PeargentLabs/Otter-Chess
-- Play it in your browser: https://peargentlabs.github.io/Otter-Chess/play
-- Weights: https://huggingface.co/peargentlabs/otter-chess
+- [Repository](https://github.com/PeargentLabs/Otter-Chess)
+- [Play it in your browser](https://peargentlabs.github.io/Otter-Chess/play/) — the same model running client-side with WebGPU
+- [Model weights](https://huggingface.co/peargentlabs/otter-chess) on Hugging Face
+- [PyPI](https://pypi.org/project/otter-chess/)
+- [Training report](https://api.wandb.ai/links/peargent-ai-labs/3mu4f1jv) on Weights & Biases
 
 ## Installation
 
