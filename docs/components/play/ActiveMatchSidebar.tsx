@@ -33,7 +33,7 @@ export default function ActiveMatchSidebar({
         <div className="block-label font-mono text-[9px] text-pear tracking-[0.1em] mb-2 uppercase font-bold">
           Move List
         </div>
-        <div className="movelist overflow-y-auto flex-grow pr-1 flex flex-col gap-1 text-[11px] font-mono max-h-[300px]">
+        <div className="movelist lg:overflow-y-auto flex-grow pr-1 flex flex-col gap-1 text-[11px] font-mono lg:max-h-[300px]">
           {historyMovesSan.length > 0 ? (
             historyMovesSan.reduce<React.ReactElement[]>((acc, move, idx) => {
               if (idx % 2 === 0) {

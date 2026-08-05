@@ -88,13 +88,17 @@ export default function NotationColumn({
   const formatBaseSec = getBaseSeconds(ANALYZE_TIME_FORMATS[analyzeTimeFormat]);
 
   return (
-    <div className="order-3 lg:order-1 border-t border-line lg:border-t-0 w-full lg:w-[300px] shrink-0 flex flex-col bg-panel min-h-0 divide-y divide-line">
+    // Below lg the expanded drawer is capped at 45dvh so it can't swallow the
+    // whole screen; whatever it can't show scrolls inside (the analyze branch
+    // already scrolls internally with its nav pinned, the live branch gets
+    // overflow-y-auto on its own panel).
+    <div className="order-3 lg:order-1 border-t border-line lg:border-t-0 w-full lg:w-[300px] shrink-0 max-h-[45dvh] lg:max-h-none flex flex-col bg-panel min-h-0 divide-y divide-line">
       <button
         type="button"
         onClick={() => setMobileNotationOpen((v) => !v)}
         aria-expanded={mobileNotationOpen}
         aria-controls="mobile-notation-panel"
-        className="lg:hidden flex items-center justify-between p-4 px-6 bg-panel/30 cursor-pointer"
+        className="lg:hidden shrink-0 flex items-center justify-between p-3.5 px-6 bg-panel/30 cursor-pointer"
       >
         <span className="block-label font-mono text-[12px] text-pear tracking-[0.12em] uppercase font-bold">
           {isAnalyzeMode ? `Analysis Settings · Moves (${analysisMoves.length})` : 'Live Game Notation'}
@@ -374,7 +378,7 @@ export default function NotationColumn({
           </>
         ) : (
           <>
-            <div className="p-5 px-6 space-y-4 bg-panel/30 flex-grow flex flex-col min-h-0">
+            <div className="p-5 px-6 space-y-4 bg-panel/30 flex-grow flex flex-col min-h-0 overflow-y-auto lg:overflow-visible">
               <div className="hidden lg:block block-label font-mono text-[12px] text-pear tracking-[0.12em] uppercase font-bold">
                 <span>Live Game Notation</span>
               </div>
@@ -417,7 +421,7 @@ export default function NotationColumn({
                     value={isEditorMode && isFreeform ? "" : livePgnInput}
                     onChange={handlePgnInputChange}
                     placeholder={isEditorMode && isFreeform ? "PGN is disabled in Freeform Mode." : "No moves recorded yet."}
-                    className={`w-full flex-grow px-2.5 py-1.5 bg-bg border border-[#7a856f]/40 text-[12.5px] font-mono text-paper rounded-[2px] focus:outline-none focus:border-pear/50 resize-none min-h-[220px] ${(isEditorMode && isFreeform) ? 'opacity-40 pointer-events-none select-none' : ''}`}
+                    className={`w-full flex-grow px-2.5 py-1.5 bg-bg border border-[#7a856f]/40 text-[12.5px] font-mono text-paper rounded-[2px] focus:outline-none focus:border-pear/50 resize-none min-h-[120px] lg:min-h-[220px] ${(isEditorMode && isFreeform) ? 'opacity-40 pointer-events-none select-none' : ''}`}
                   />
                 </div>
               </div>

@@ -8,6 +8,7 @@ export default function LobbySidebar({
   onChallengeClick,
   onAnalyzeClick,
   onEditorClick,
+  onSetupClick,
   loadGameForAnalysis,
 }: {
   enginesReady: boolean;
@@ -15,23 +16,42 @@ export default function LobbySidebar({
   onChallengeClick: () => void;
   onAnalyzeClick: () => void;
   onEditorClick: () => void;
+  onSetupClick: () => void;
   loadGameForAnalysis: (input: string) => void;
 }) {
   return (
     <div className="flex-grow flex flex-col min-h-0 divide-y divide-line">
-      <div className="p-6 px-8 space-y-4">
+      {/* Below lg this is trimmed to the single badge row: on a phone the
+          controls column is only ~180px tall, and the heading plus blurb ate
+          all of it, leaving the actions below the fold. The title and blurb
+          are decoration — the buttons are the reason anyone is here. */}
+      <div className="p-3 px-6 lg:p-6 lg:px-8 space-y-2.5 lg:space-y-4">
         <div className="flex items-center gap-2 font-mono text-[9px] text-pear tracking-[0.08em] uppercase">
           <span className="border border-pear px-1.5 py-0.5 font-bold">LOBBY</span>
           <span>Otter Chess Arena</span>
         </div>
-        <h2 className="font-space font-medium text-[18px] text-paper">Otter Arena</h2>
-        <p className="text-[11.5px] text-muted leading-relaxed">
+        <h2 className="hidden lg:block font-space font-medium text-[18px] text-paper">Otter Arena</h2>
+        <p className="hidden lg:block text-[11.5px] text-muted leading-relaxed">
           Configure your match variables, setup custom positions using the editor, or import notation files.
         </p>
       </div>
 
       {/* Lobby Play Game, Analyze, & Board Editor buttons */}
-      <div className="p-6 px-8 space-y-2.5">
+      <div className="p-4 px-6 lg:p-6 lg:px-8 space-y-2.5">
+        {/* Every action below is gated on the engines being downloaded, so
+            when they're missing the lobby leads with the way to get them —
+            otherwise the whole panel is three dead buttons and the only cue
+            is the status strip. */}
+        {!enginesReady && (
+          <button
+            onClick={onSetupClick}
+            className="w-full py-3 font-space text-[12px] tracking-wider uppercase font-semibold text-bg bg-pear border border-pear hover:bg-[#4d7524] hover:border-[#4d7524] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+          >
+            <span>Set Up Engines</span>
+            <span className="font-mono text-[10px] normal-case tracking-normal opacity-80">64MB</span>
+          </button>
+        )}
+
         <button
           onClick={onChallengeClick}
           disabled={!enginesReady}
@@ -58,12 +78,14 @@ export default function LobbySidebar({
       </div>
 
       {/* Match history list */}
-      <div className="flex-grow p-6 px-8 flex flex-col min-h-0">
+      <div className="flex-grow p-4 px-6 lg:p-6 lg:px-8 flex flex-col min-h-0">
         <div className="block-label font-mono text-[9.5px] text-pear tracking-[0.12em] mb-3 uppercase font-bold shrink-0">
           Match History
         </div>
+        {/* Below lg the whole sidebar is the scroll container, so this list
+            runs at natural height instead of nesting a second scroller. */}
         {matchHistory.length > 0 ? (
-          <div className="space-y-2 flex-grow overflow-y-auto pr-1 min-h-[240px]">
+          <div className="space-y-2 flex-grow lg:overflow-y-auto pr-1 lg:min-h-[240px]">
             {matchHistory.map((rec) => (
               <div
                 key={rec.id}

@@ -92,22 +92,35 @@ export default function BoardColumn({
   // vw formula overshoots the real content width and causes horizontal
   // overflow. Desktop keeps the vw formula — the lg layout is height-
   // capped so the page never grows a vertical scrollbar there.
-  const desktopBoardW = "lg:w-[min(calc(100vw-760px),82vh,720px)]";
+  // The subtrahend is everything the lg row spends outside the board itself:
+  // the 300px notation column + 400px sidebar + their 2 divide-x borders, this
+  // column's lg:p-6 (48), both eval-bar slots (2 x 24), and the row's two
+  // lg:gap-4 gutters (32) = 830. It used to read 760, which under-reserved by
+  // ~70px and left every lg window narrower than ~1510px (i.e. an ordinary
+  // 1280/1366/1440 laptop) with a horizontal scrollbar.
+  const desktopBoardW = "lg:w-[min(calc(100vw-830px),82vh,720px)]";
   // Cards match the measured board width exactly once boardPx lands
   // (a frame after mount); until then they fall back to full width.
   const cardStyle = boardPx !== null ? { width: boardPx } : undefined;
   const cardClasses = `w-full max-w-[min(80vh,720px)] ${desktopBoardW}`;
 
-  const renderCard = (card: Card) => (
-    <div key={card.key} style={cardStyle} className={`${cardClasses} flex justify-between items-center px-4 py-2 border border-[#7a856f]/30 bg-panel/30 rounded-[3px]`}>
-      <div className="flex items-center gap-2.5">
-        <span className={`w-3 h-3 rounded-full border border-[#7a856f]/40 ${card.dotBlack ? 'bg-[#1a1b15]' : 'bg-[#FFFFFF]'}`} />
-        <div className="font-mono text-xs text-paper font-semibold">
+  // `inRow` cards sit inside a wrapper that already carries the pinned board
+  // width (the mobile bottom row, which also holds the Flip control), so they
+  // flex into the leftover instead of claiming that width themselves.
+  const renderCard = (card: Card, inRow = false) => (
+    <div
+      key={card.key}
+      style={inRow ? undefined : cardStyle}
+      className={`${inRow ? 'flex-1 min-w-0' : cardClasses} flex justify-between items-center px-4 py-2 border border-[#7a856f]/30 bg-panel/30 rounded-[3px]`}
+    >
+      <div className="flex items-center gap-2.5 min-w-0">
+        <span className={`w-3 h-3 rounded-full border border-[#7a856f]/40 shrink-0 ${card.dotBlack ? 'bg-[#1a1b15]' : 'bg-[#FFFFFF]'}`} />
+        <div className="font-mono text-xs text-paper font-semibold truncate">
           {card.label} {card.rating != null && <span className={card.isOtter ? 'text-pear' : 'text-muted'}>({card.rating})</span>}
         </div>
       </div>
       {isMatchActive && (
-        <div className={`font-mono text-[13px] font-bold px-2 py-0.5 border rounded-[2px] ${
+        <div className={`font-mono text-[13px] font-bold px-2 py-0.5 border rounded-[2px] shrink-0 ${
           card.turnActive
             ? 'border-pear/85 bg-pear-tint/10 text-pear shadow-[0_0_10px_rgba(92,138,46,0.12)]'
             : 'border-line bg-bg/50 text-paper/85'
@@ -123,12 +136,18 @@ export default function BoardColumn({
   );
 
   return (
-    <div className="order-1 lg:order-2 flex-grow flex flex-col items-center justify-center bg-bg relative min-h-0 px-4 pt-12 pb-5 lg:p-6 space-y-3.5">
+    // shrink-0 below lg: the column claims exactly the height its board and
+    // cards need and the controls column below takes the remainder, so the
+    // whole page fits one screen without scrolling (see the board wrapper's
+    // mobile max-h, which is what keeps that height inside the budget).
+    <div className="order-1 lg:order-2 shrink-0 lg:flex-grow flex flex-col items-center justify-center bg-bg relative min-h-0 px-4 py-3 lg:p-6 space-y-2.5 lg:space-y-3.5">
 
-      {/* Flip Board Button (top-right, 10px from sidebar) */}
+      {/* Flip Board Button — desktop only (top-right, 10px from sidebar).
+          Below lg it would float alone in a band of empty space above the
+          board, so it moves into the bottom card's row instead. */}
       <button
         onClick={() => setIsFlipped((prev) => !prev)}
-        className="absolute top-2 right-2.5 font-mono text-[10px] uppercase tracking-wider text-muted border border-line px-2 py-1 hover:text-pear hover:border-pear transition-all cursor-pointer flex items-center gap-1.5 z-10"
+        className="hidden lg:flex absolute top-2 right-2.5 font-mono text-[10px] uppercase tracking-wider text-muted border border-line px-2 py-1 hover:text-pear hover:border-pear transition-all cursor-pointer items-center gap-1.5 z-10"
         title="Flip board"
       >
         <span>⟳</span>
@@ -156,9 +175,19 @@ export default function BoardColumn({
             never overridden by JS, so it keeps tracking its container. On
             mobile flex-1 hands it exactly the row width left over after the
             bars and gaps — no viewport units involved. */}
+        {/* The mobile max-h is the other half of the sizing story: width alone
+            would make the board as tall as the viewport is wide, which on a
+            phone leaves nothing for the lobby/controls below it. Capping the
+            height caps the board (the ResizeObserver takes min(width, height)),
+            so the reserved 400px — header, cards, padding, and enough of the
+            controls column for its primary actions — is always left over. It
+            only bites on short viewports; anywhere taller than ~700px the
+            board is still width-limited exactly as before. max() keeps the
+            board sane on very short viewports (landscape phones), where the
+            page falls back to scrolling rather than crushing the board. */}
         <div
           ref={boardWrapperRef}
-          className={`flex-1 min-w-0 max-w-[min(80vh,720px)] lg:flex-none lg:max-w-none ${desktopBoardW} aspect-square flex items-center justify-center`}
+          className={`flex-1 min-w-0 max-w-[min(80vh,720px)] max-h-[max(200px,calc(100dvh-400px))] lg:flex-none lg:max-w-none lg:max-h-none ${desktopBoardW} aspect-square flex items-center justify-center`}
         >
           {/* Chessboard View Container — pinned to a multiple of 8px so
               chessground's own crisp-square snapping is a no-op (see 1b above). */}
@@ -183,7 +212,26 @@ export default function BoardColumn({
         />
       </div>
 
-      {renderCard(bottomCard)}
+      {/* Bottom row — the near-side player card, with the Flip control docked
+          beside it below lg. The pinned board width lives on this ROW there,
+          and the card flexes into whatever Flip leaves, so the row still lines
+          up with the board's edges exactly. On lg the button is hidden and the
+          card fills the row on its own. */}
+      <div style={cardStyle} className={`${cardClasses} flex items-stretch gap-2`}>
+        {renderCard(bottomCard, true)}
+        <button
+          onClick={() => setIsFlipped((prev) => !prev)}
+          className="lg:hidden shrink-0 font-mono text-[10px] uppercase tracking-wider text-muted border border-[#7a856f]/30 bg-panel/30 rounded-[3px] px-2.5 hover:text-pear hover:border-pear active:text-pear transition-all cursor-pointer flex items-center gap-1.5"
+          title="Flip board"
+          aria-label="Flip board"
+        >
+          <span className="text-[13px] leading-none">⟳</span>
+          {/* Icon-only on the narrowest phones — during a match the card next
+              to it also has to fit a name, rating and clock, and the label is
+              what pushes those into an ellipsis. */}
+          <span className="hidden min-[400px]:inline">Flip</span>
+        </button>
+      </div>
     </div>
   );
 }

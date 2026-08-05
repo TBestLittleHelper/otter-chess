@@ -2383,12 +2383,20 @@ export default function PlayPage() {
   };
 
   return (
-    // Mobile stacks board-first (order classes): board -> mode sidebar ->
-    // notation/history. Desktop keeps the DOM order as visual order
+    // Mobile stacks engine status -> board -> mode sidebar -> notation/history
+    // (order classes). Desktop keeps the DOM order as visual order
     // (notation | board | sidebar). Section separators are explicit
     // border-t's on the reordered children rather than divide-y, which
     // follows DOM order and would draw them in the wrong places.
-    <div className="flex-grow flex flex-col lg:flex-row min-h-0 lg:divide-x divide-line lg:h-[calc(100vh-68px)]">
+    //
+    // Height-capped at every breakpoint, not just lg: the mobile stack used to
+    // run ~1170px tall on a 667px phone, pushing the lobby actions and the
+    // engine-setup control below the fold. Now the board is capped (see
+    // BoardColumn) and the sidebar takes the remainder with its own scroll, so
+    // the default view fits one screen. overflow-y-auto rather than -hidden is
+    // the escape hatch: expanding the notation drawer, or a viewport too short
+    // for the whole budget, scrolls here instead of clipping.
+    <div className="flex-grow flex flex-col lg:flex-row min-h-0 h-[calc(100dvh-68px)] overflow-y-auto lg:divide-x divide-line lg:h-[calc(100vh-68px)] lg:overflow-visible">
 
       <NotationColumn
         mobileNotationOpen={mobileNotationOpen}
@@ -2454,8 +2462,12 @@ export default function PlayPage() {
         sfTopMoves={sfTopMoves}
       />
 
-      {/* COLUMN 3 (RIGHT): Controls & Move History */}
-      <div className="order-2 lg:order-3 border-t border-line lg:border-t-0 w-full lg:w-[400px] shrink-0 flex flex-col bg-panel min-h-0 divide-y divide-line lg:overflow-y-auto">
+      {/* COLUMN 3 (RIGHT): Controls & Move History.
+          Below lg this is the flexible child — it absorbs whatever height the
+          board column leaves and scrolls its own overflow, keeping the primary
+          actions (Challenge / Analyze / Editor) on screen. min-h keeps it from
+          being squeezed to nothing when the notation drawer is expanded. */}
+      <div className="order-2 lg:order-3 border-t border-line lg:border-t-0 w-full lg:w-[400px] flex-1 min-h-[150px] lg:flex-none lg:min-h-0 flex flex-col bg-panel divide-y divide-line overflow-y-auto">
         
         {/* Move History / Lobby Middle Area */}
         {isAnalyzeMode ? (
@@ -2573,6 +2585,7 @@ export default function PlayPage() {
             onChallengeClick={() => setIsConfigModalOpen(true)}
             onAnalyzeClick={handleAnalyzeClick}
             onEditorClick={openEditor}
+            onSetupClick={() => setShowSetupModal(true)}
             loadGameForAnalysis={loadGameForAnalysis}
           />
         ) : (
