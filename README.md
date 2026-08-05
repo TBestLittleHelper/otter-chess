@@ -235,7 +235,7 @@ Once the training data is prepared, you can train or validate the model using th
    Iterates through parquet game shards, canonicalizes positions and moves using `fastchess`, and constructs PyTorch tensors.
 
 ### Training Report & Metrics
-Detailed training runs, validation curves, and metrics are documented in the [Weights & Biases Training Report](https://api.wandb.ai/links/peargent-ai-labs/dzjhhio7).
+Detailed training runs, validation curves, and metrics are documented in the [Weights & Biases Training Report](https://api.wandb.ai/links/peargent-ai-labs/3mu4f1jv).
 
 ---
 
