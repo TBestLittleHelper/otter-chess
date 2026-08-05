@@ -1,0 +1,19 @@
+# Dependencies for the training / evaluation / export scripts in this directory.
+# These are deliberately NOT runtime dependencies of the published `otter-chess`
+# package -- see ../package/pyproject.toml for that (much smaller) set.
+#
+#   pip install -e ../package         # the otter_chess library itself
+#   pip install -r requirements.txt   # everything these scripts add on top
+
+# export_onnx.py imports `from otter_chess.model import StrongPolicyModel`, so
+# the library has to be installed alongside these.
+torch
+numpy
+fastchess
+
+# data_loader.py - streaming Parquet shards produced by the Rust data_pipeline
+pyarrow
+
+# train.py - optional run tracking; guarded by try/except, so training still
+# works without it (wandb_enabled=False).
+wandb

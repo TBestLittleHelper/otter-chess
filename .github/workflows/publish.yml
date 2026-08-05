@@ -28,12 +28,13 @@ jobs:
         run: pip install build
 
       - name: Build sdist and wheel
+        working-directory: package
         run: python -m build
 
       - uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: dist/
+          path: package/dist/
 
   publish:
     needs: build

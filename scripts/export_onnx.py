@@ -3,7 +3,7 @@ import os
 import argparse
 import torch
 import torch.nn as nn
-from otter.model import StrongPolicyModel
+from otter_chess.model import StrongPolicyModel
 
 def main():
     parser = argparse.ArgumentParser(description="Export PyTorch Otter model to ONNX format")

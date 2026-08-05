@@ -26,8 +26,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # The Python project root is package/, not the repo root.
       - name: Install package with dev dependencies
-        run: pip install -e ".[dev]"
+        run: pip install -e "./package[dev]"
 
+      # tests/ stays at the repo root and imports the installed `otter_chess`.
       - name: Run tests
         run: pytest tests/ -v

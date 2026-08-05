@@ -28,7 +28,6 @@ The model features **15.3M parameters** and is trained jointly on three objectiv
 otter-chess/
 ├── .github/
 │   └── workflows/         # CI (lint/test) and PyPI publish (trusted publishing)
-├── pyproject.toml         # Package definition and dependencies
 ├── LICENSE                # MIT License
 ├── CITATION.cff           # Citation metadata
 ├── .gitignore             # Standard git excludes
@@ -43,39 +42,54 @@ otter-chess/
 ├── data/
 │   └── README.md          # Parquet schema & Elo band mapping (actual data is gitignored)
 ├── scripts/               # Training & validation scripts (for reference)
+│   ├── requirements.txt   # Deps for these scripts only (not the library)
 │   ├── train.py           # Model training loop
 │   ├── data_loader.py     # Fastchess parquet streaming data loader
 │   ├── inference.py       # Command line inference runner
 │   ├── evaluate.py        # Standalone validation evaluator
 │   └── export_onnx.py     # Exports the model to ONNX for browser inference
-├── src/
-│   └── otter/             # Core library package code
+├── package/               # The published Python package (its own project root)
+│   ├── pyproject.toml     # Packaging config & runtime dependencies
+│   ├── README.md          # Rendered as the PyPI project page
+│   └── otter_chess/       # Core library package code (import name)
 │       ├── __init__.py    # Top-level API exports
 │       ├── api.py         # OtterModel class (resolving weights & predicting)
 │       ├── model.py       # PyTorch model components
 │       └── vocab/         # Pre-built vocabulary mappings
-└── tests/                 # pytest suite for src/otter
+└── tests/                 # pytest suite for package/otter_chess
 ```
 
 ---
 
 ## Installation
 
-You can install `otter-chess` locally in editable mode:
+From PyPI:
 
 ```bash
-pip install -e .
+pip install otter-chess
+```
+
+Or locally in editable mode — note the package root is `package/`, not the
+repository root:
+
+```bash
+pip install -e ./package
 ```
 
 ### Dependencies
-The package automatically installs:
-- `numpy`
-- `pyarrow`
-- `python-chess`
-- `fastchess` (a custom high-performance C extension for chess operations)
+The package automatically installs only what the `otter_chess` library imports:
 - `torch`
 - `safetensors`
-- `wandb`
+- `fastchess` (a custom high-performance C extension for chess operations)
+- `numpy`
+
+The training and export scripts need more than the library does. Those extras
+(`pyarrow`, `wandb`) are listed separately in `scripts/requirements.txt`:
+
+```bash
+pip install -e ./package
+pip install -r scripts/requirements.txt
+```
 
 ---
 
@@ -87,7 +101,7 @@ The package exposes the `OtterModel` class.
 The model will automatically resolve and cache the model weights (`model.safetensors`, downloaded from [Hugging Face](https://huggingface.co/peargentlabs/otter-chess)) on demand:
 
 ```python
-from otter import OtterModel
+from otter_chess import OtterModel
 
 # Option A: Auto-resolve weights (checks cache ~/.cache/otter-chess/, then fallbacks, then downloads)
 model = OtterModel()

@@ -181,7 +181,7 @@ export default function DocsPage() {
           </p>
           <div className="relative">
             <pre className="bg-panel border border-line p-[18px] px-[20px] font-mono text-[12.5px] leading-[1.7] text-paper overflow-x-auto">
-              <span className="text-pear">from</span> otter <span className="text-pear">import</span> OtterModel{"\n"}{"\n"}
+              <span className="text-pear">from</span> otter_chess <span className="text-pear">import</span> OtterModel{"\n"}{"\n"}
               <span className="text-muted"># Initializing OtterModel loads the cached model weights automatically</span>{"\n"}
               model = OtterModel(device=<span className="text-pear-deep">"cpu"</span>){"\n"}{"\n"}
               result = model.predict({"\n"}

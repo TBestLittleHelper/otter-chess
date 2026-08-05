@@ -29,12 +29,14 @@ export default function HomePage() {
               >
                 Play Otter →
               </Link>
-              <Link
-                href="/docs"
+              <a
+                href="https://github.com/PeargentLabs/otter-paper/blob/main/Otter_A_Time-Aware_History-Conditioned_Human_Chess_AI.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="font-mono text-[13px] tracking-[0.01em] text-paper border-b border-line pb-[2px] hover:text-pear hover:border-pear transition-all duration-150 cursor-pointer flex items-center gap-[7px]"
               >
                 Read the paper ↗
-              </Link>
+              </a>
             </div>
           </div>
           <div className="bg-pear-tint aspect-square flex items-center justify-center relative w-full rounded-sm overflow-hidden">
@@ -186,7 +188,7 @@ export default function HomePage() {
             </span>
           </a>
           <a
-            href="https://wandb.ai/peargent-ai-labs/Otter/reports/Otter-3M-Run--VmlldzoxNzQxMTY3Nw"
+            href="https://api.wandb.ai/links/peargent-ai-labs/3mu4f1jv"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-baseline justify-between py-[26px] border-t border-line last:border-b last:border-line hover:pl-[10px] transition-all duration-200 cursor-pointer"
@@ -198,17 +200,19 @@ export default function HomePage() {
               Training runs ↗
             </span>
           </a>
-          <Link
-            href="/docs"
+          <a
+            href="https://github.com/PeargentLabs/otter-paper/blob/main/Otter_A_Time-Aware_History-Conditioned_Human_Chess_AI.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             className="group flex items-baseline justify-between py-[26px] border-t border-line last:border-b last:border-line hover:pl-[10px] transition-all duration-200 cursor-pointer"
           >
             <span className="font-space font-medium text-[21px] text-paper group-hover:text-pear transition-colors duration-150">
               Paper
             </span>
             <span className="font-mono text-[12px] text-muted">
-              arXiv ↗
+              PDF ↗
             </span>
-          </Link>
+          </a>
         </div>
       </section>
 

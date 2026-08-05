@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "otter-chess"
+version = "0.2.0"
+description = "Otter chess move prediction library API"
+# Rendered as the PyPI project page. Must live inside this directory, so it is
+# a package-focused README rather than the repository's (which also covers the
+# web app, Rust data pipeline, and training scripts).
+readme = "README.md"
+authors = [
+    { name = "Tarun", email = "tarun@peargentlabs.com" }
+]
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+# Runtime imports of the `otter_chess` package only. Training/data-pipeline tools
+# (pyarrow, wandb) live in ../scripts/requirements.txt so installing the
+# library doesn't drag them in.
+dependencies = [
+    "torch",        # otter_chess.model, otter_chess.api
+    "safetensors",  # otter_chess.api - checkpoint loading
+    "fastchess",    # otter_chess.api - board encoding
+    "numpy",        # otter_chess.api - torch.from_numpy on fastchess board tensors
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.urls]
+Repository = "https://github.com/PeargentLabs/Otter-Chess"
+
+# This directory is the package root: `otter_chess/` sits directly beside this
+# file. The import name uses an underscore because `otter-chess` is not a valid
+# Python identifier; the PyPI distribution name above keeps the hyphen.
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["otter_chess*"]
+
+[tool.setuptools.package-data]
+"otter_chess.vocab" = ["*.json"]
+
+[tool.pyrefly]
+search_path = [".", "../scripts"]

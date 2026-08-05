@@ -1,5 +1,5 @@
-"""Smoke tests for otter.api helper functions that don't require model weights."""
-from otter.api import (
+"""Smoke tests for otter_chess.api helper functions that don't require model weights."""
+from otter_chess.api import (
     canonicalize_move,
     elo_to_bucket,
     get_base_seconds,
