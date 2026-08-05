@@ -1042,7 +1042,7 @@ export default function PlayPage() {
     setModelProgress(0);
     try {
       const cache = await caches.open('otter-model-cache');
-      const res = await fetch('/policy_model.onnx');
+      const res = await fetch('https://huggingface.co/peargentlabs/otter-chess/resolve/main/model_fp16.onnx');
       if (!res.body) throw new Error("Null response body");
 
       const contentLength = res.headers.get('content-length');
@@ -1575,7 +1575,7 @@ export default function PlayPage() {
       // Pull player names/ratings straight from the PGN headers — `game`
       // itself won't retain them since navigation reloads it from bare FENs.
       const headers = tempPgnChess.header();
-      const cleanHeader = (v: string | undefined) => (v && v !== '?' ? v : null);
+      const cleanHeader = (v: string | null | undefined) => (v && v !== '?' ? v : null);
       const whiteEloHeader = cleanHeader(headers.WhiteElo);
       const blackEloHeader = cleanHeader(headers.BlackElo);
       setAnalysisWhiteName(cleanHeader(headers.White));

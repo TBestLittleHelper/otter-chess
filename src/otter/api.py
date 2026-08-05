@@ -7,6 +7,7 @@ from typing import List, Optional, Dict, Any
 
 import torch
 import fastchess
+from safetensors.torch import load_file as load_safetensors
 
 from .model import (
     StrongPolicyModel,
@@ -16,7 +17,7 @@ from .model import (
     TIME_CONTROL_BUCKETS,
 )
 
-DEFAULT_DOWNLOAD_URL = "https://github.com/peargentlabs/otter-chess/releases/download/v0.1.0/best.pt"
+DEFAULT_DOWNLOAD_URL = "https://huggingface.co/peargentlabs/otter-chess/resolve/main/model.safetensors"
 
 # Helper functions for mapping inputs to model inputs
 def elo_to_bucket(elo: int) -> int:
@@ -138,8 +139,12 @@ class OtterModel:
 
         # Initialize the model and load the checkpoint
         self.model = StrongPolicyModel(history_k=self.history_k).to(self.device)
-        checkpoint = torch.load(resolved_path, map_location=self.device, weights_only=False)
-        self.model.load_state_dict(checkpoint["model_state_dict"])
+        if resolved_path.endswith(".safetensors"):
+            state_dict = load_safetensors(resolved_path, device=str(self.device))
+            self.model.load_state_dict(state_dict)
+        else:
+            checkpoint = torch.load(resolved_path, map_location=self.device, weights_only=False)
+            self.model.load_state_dict(checkpoint["model_state_dict"])
         self.model.eval()
 
     def _resolve_checkpoint(self, checkpoint_path: Optional[str], download_url: Optional[str]) -> str:
@@ -149,12 +154,13 @@ class OtterModel:
                 raise FileNotFoundError(f"Specified checkpoint not found: {checkpoint_path}")
             return checkpoint_path
 
-        # Cache path: ~/.cache/otter-chess/best.pt
+        # Cache dir: ~/.cache/otter-chess/ (filename varies by checkpoint format)
         cache_dir = os.path.expanduser("~/.cache/otter-chess")
-        cache_path = os.path.join(cache_dir, "best.pt")
 
-        if os.path.exists(cache_path):
-            return cache_path
+        for cached_name in ("model.safetensors", "best.pt"):
+            candidate = os.path.join(cache_dir, cached_name)
+            if os.path.exists(candidate):
+                return candidate
 
         # If not cached, search for local fallback paths to avoid redundant downloads
         fallback_paths = [
@@ -167,11 +173,13 @@ class OtterModel:
             if os.path.exists(path):
                 print(f"Found local fallback checkpoint at {path}. Copying to cache...", flush=True)
                 os.makedirs(cache_dir, exist_ok=True)
+                cache_path = os.path.join(cache_dir, "best.pt")
                 shutil.copy2(path, cache_path)
                 return cache_path
 
         # If no local fallback, download from the remote URL
         url = download_url or DEFAULT_DOWNLOAD_URL
+        cache_path = os.path.join(cache_dir, os.path.basename(url) or "model.safetensors")
         try:
             download_file(url, cache_path)
         except Exception as e:

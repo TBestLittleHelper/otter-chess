@@ -74,6 +74,7 @@ The package automatically installs:
 - `python-chess`
 - `fastchess` (a custom high-performance C extension for chess operations)
 - `torch`
+- `safetensors`
 - `wandb`
 
 ---
@@ -83,7 +84,7 @@ The package automatically installs:
 The package exposes the `OtterModel` class.
 
 ### 1. Initializing the Model
-The model will automatically resolve and cache the model weights (`best.pt`) on demand:
+The model will automatically resolve and cache the model weights (`model.safetensors`, downloaded from [Hugging Face](https://huggingface.co/peargentlabs/otter-chess)) on demand:
 
 ```python
 from otter import OtterModel
@@ -91,11 +92,11 @@ from otter import OtterModel
 # Option A: Auto-resolve weights (checks cache ~/.cache/otter-chess/, then fallbacks, then downloads)
 model = OtterModel()
 
-# Option B: Pass a custom local weights file directly
-model = OtterModel(checkpoint_path="/path/to/my_weights.pt")
+# Option B: Pass a custom local weights file directly (.safetensors or .pt)
+model = OtterModel(checkpoint_path="/path/to/my_weights.safetensors")
 
 # Option C: Configure a custom remote download URL
-model = OtterModel(download_url="https://example.com/weights.pt")
+model = OtterModel(download_url="https://huggingface.co/peargentlabs/otter-chess/resolve/main/model.safetensors")
 ```
 
 ### 2. Running Predictions

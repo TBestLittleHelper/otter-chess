@@ -23,7 +23,7 @@ export default function Header() {
       </div>
 
       {/* Navigation Links */}
-      <div className="flex items-center gap-[18px] sm:gap-[36px]">
+      <nav aria-label="Main" className="flex items-center gap-[18px] sm:gap-[36px]">
         <Link
           href="/"
           className={`font-mono text-[13px] tracking-[0.01em] transition-all duration-150 ${
@@ -52,7 +52,7 @@ export default function Header() {
         >
           Play &rarr;
         </Link>
-      </div>
+      </nav>
     </header>
   );
 }

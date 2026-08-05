@@ -18,6 +18,7 @@ dependencies = [
     "wandb",
     "fastchess",
     "torch",
+    "safetensors",
 ]
 
 [project.optional-dependencies]

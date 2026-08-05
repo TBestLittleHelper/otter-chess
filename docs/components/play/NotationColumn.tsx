@@ -239,89 +239,91 @@ export default function NotationColumn({
                 </div>
               </div>
 
-              <div className="hidden lg:flex p-5 px-6 bg-panel/30 items-center justify-between shrink-0">
-                <span className="block-label font-mono text-[12px] text-pear tracking-[0.12em] uppercase font-bold">
-                  Move History <span className="text-muted normal-case font-normal">({analysisMoves.length})</span>
-                </span>
+              <div>
+                <div className="hidden lg:flex p-5 px-6 bg-panel/30 items-center justify-between shrink-0">
+                  <span className="block-label font-mono text-[12px] text-pear tracking-[0.12em] uppercase font-bold">
+                    Move History <span className="text-muted normal-case font-normal">({analysisMoves.length})</span>
+                  </span>
+                  <button
+                    onClick={() => setShowFenPgnModal(true)}
+                    className="font-mono text-[10px] uppercase font-bold text-muted hover:text-pear border border-[#7a856f]/35 hover:border-pear px-2 py-1 rounded-[2px] transition-all cursor-pointer"
+                  >
+                    FEN / PGN
+                  </button>
+                </div>
                 <button
                   onClick={() => setShowFenPgnModal(true)}
-                  className="font-mono text-[10px] uppercase font-bold text-muted hover:text-pear border border-[#7a856f]/35 hover:border-pear px-2 py-1 rounded-[2px] transition-all cursor-pointer"
+                  className="lg:hidden m-4 font-mono text-[10px] uppercase font-bold text-muted hover:text-pear border border-[#7a856f]/35 hover:border-pear px-2 py-1 rounded-[2px] transition-all cursor-pointer self-start"
                 >
                   FEN / PGN
                 </button>
-              </div>
-              <button
-                onClick={() => setShowFenPgnModal(true)}
-                className="lg:hidden m-4 font-mono text-[10px] uppercase font-bold text-muted hover:text-pear border border-[#7a856f]/35 hover:border-pear px-2 py-1 rounded-[2px] transition-all cursor-pointer self-start"
-              >
-                FEN / PGN
-              </button>
 
-              {/* Move List — a scrollable window with increased height
-                  to display more moves, since this section now also
-                  carries the conditioning sliders above it. */}
-              <div className="p-4 px-6 shrink-0">
-                <div className="max-h-[370px] overflow-y-auto pr-1">
-                  {analysisMoves.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[14px] font-mono">
-                      {/* A branch played before the very first mainline move
-                          (base index -1) renders above row 0. */}
-                      {branchesByBase.has(-1) && (
-                        <div className="col-span-2">{renderBranchVariation(-1)}</div>
-                      )}
-                      {Array.from({ length: Math.ceil(analysisMoves.length / 2) }).map((_, movePairIdx) => {
-                        const move1Idx = movePairIdx * 2;
-                        const move2Idx = movePairIdx * 2 + 1;
-                        const m1 = analysisMoves[move1Idx];
-                        const m2 = analysisMoves[move2Idx];
-                        const move1Active = branchViewIdx === -1 && currentMoveIdx === move1Idx;
-                        const move2Active = branchViewIdx === -1 && currentMoveIdx === move2Idx;
+                {/* Move List — a scrollable window with increased height
+                    to display more moves, since this section now also
+                    carries the conditioning sliders above it. */}
+                <div className="p-4 px-6 shrink-0">
+                  <div className="max-h-[370px] overflow-y-auto pr-1">
+                    {analysisMoves.length > 0 ? (
+                      <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[14px] font-mono">
+                        {/* A branch played before the very first mainline move
+                            (base index -1) renders above row 0. */}
+                        {branchesByBase.has(-1) && (
+                          <div className="col-span-2">{renderBranchVariation(-1)}</div>
+                        )}
+                        {Array.from({ length: Math.ceil(analysisMoves.length / 2) }).map((_, movePairIdx) => {
+                          const move1Idx = movePairIdx * 2;
+                          const move2Idx = movePairIdx * 2 + 1;
+                          const m1 = analysisMoves[move1Idx];
+                          const m2 = analysisMoves[move2Idx];
+                          const move1Active = branchViewIdx === -1 && currentMoveIdx === move1Idx;
+                          const move2Active = branchViewIdx === -1 && currentMoveIdx === move2Idx;
 
-                        return (
-                          <React.Fragment key={movePairIdx}>
-                            <button
-                              onClick={() => goToAnalysisMove(move1Idx)}
-                              className={`text-left truncate cursor-pointer px-2 py-1 rounded-[3px] border-l-2 transition-all ${
-                                move1Active
-                                  ? 'bg-pear-tint/15 text-pear font-bold border-pear'
-                                  : 'text-paper/90 border-transparent hover:bg-bg hover:border-line hover:text-pear'
-                              }`}
-                            >
-                              <span className={`text-[11px] mr-1 ${move1Active ? 'text-pear/70' : 'text-muted'}`}>{movePairIdx + 1}.</span>
-                              {m1.san}
-                            </button>
-                            {/* A branch diverging right after white's move sits
-                                here — before black's actual reply, pushing it
-                                onto its own row below, same as the reference. */}
-                            {branchesByBase.has(move1Idx) && (
-                              <div className="col-span-2">{renderBranchVariation(move1Idx)}</div>
-                            )}
-                            {m2 ? (
+                          return (
+                            <React.Fragment key={movePairIdx}>
                               <button
-                                onClick={() => goToAnalysisMove(move2Idx)}
+                                onClick={() => goToAnalysisMove(move1Idx)}
                                 className={`text-left truncate cursor-pointer px-2 py-1 rounded-[3px] border-l-2 transition-all ${
-                                  move2Active
+                                  move1Active
                                     ? 'bg-pear-tint/15 text-pear font-bold border-pear'
                                     : 'text-paper/90 border-transparent hover:bg-bg hover:border-line hover:text-pear'
                                 }`}
                               >
-                                {m2.san}
+                                <span className={`text-[11px] mr-1 ${move1Active ? 'text-pear/70' : 'text-muted'}`}>{movePairIdx + 1}.</span>
+                                {m1.san}
                               </button>
-                            ) : (
-                              <div className="py-1" />
-                            )}
-                            {branchesByBase.has(move2Idx) && (
-                              <div className="col-span-2">{renderBranchVariation(move2Idx)}</div>
-                            )}
-                          </React.Fragment>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-xs text-muted italic text-center py-4 border border-dashed border-[#7a856f]/35 rounded-[3px]">
-                      Make moves on the board to review.
-                    </div>
-                  )}
+                              {/* A branch diverging right after white's move sits
+                                  here — before black's actual reply, pushing it
+                                  onto its own row below, same as the reference. */}
+                              {branchesByBase.has(move1Idx) && (
+                                <div className="col-span-2">{renderBranchVariation(move1Idx)}</div>
+                              )}
+                              {m2 ? (
+                                <button
+                                  onClick={() => goToAnalysisMove(move2Idx)}
+                                  className={`text-left truncate cursor-pointer px-2 py-1 rounded-[3px] border-l-2 transition-all ${
+                                    move2Active
+                                      ? 'bg-pear-tint/15 text-pear font-bold border-pear'
+                                      : 'text-paper/90 border-transparent hover:bg-bg hover:border-line hover:text-pear'
+                                  }`}
+                                >
+                                  {m2.san}
+                                </button>
+                              ) : (
+                                <div className="py-1" />
+                              )}
+                              {branchesByBase.has(move2Idx) && (
+                                <div className="col-span-2">{renderBranchVariation(move2Idx)}</div>
+                              )}
+                            </React.Fragment>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-muted italic text-center py-4 border border-dashed border-[#7a856f]/35 rounded-[3px]">
+                        Make moves on the board to review.
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

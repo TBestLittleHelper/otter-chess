@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { withBasePath } from "@/lib/site";
 
 export default function HomePage() {
   return (
@@ -38,7 +39,7 @@ export default function HomePage() {
           </div>
           <div className="bg-pear-tint aspect-square flex items-center justify-center relative w-full rounded-sm overflow-hidden">
             <img
-              src="/otter-hero.png"
+              src={withBasePath("/otter-hero.png")}
               alt="Pixel-art otter pondering a pawn on a chessboard"
               className="hero-otter-img w-[86%] h-auto select-none pointer-events-none"
               draggable={false}

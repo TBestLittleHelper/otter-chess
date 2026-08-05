@@ -219,7 +219,7 @@ export default function DocsPage() {
               <div className="flex gap-3.5 py-2.5 border-b border-line text-[13px] last:border-b-0">
                 <div className="font-mono text-pear-deep w-[140px] shrink-0">checkpoint_path</div>
                 <div className="font-mono text-muted w-[90px] shrink-0">str | None</div>
-                <div className="text-muted">Path to local PyTorch weights (<code className="font-mono bg-panel border border-line px-1.5 py-0.5 text-xs text-pear-deep">best.pt</code>). If <code className="font-mono bg-panel border border-line px-1.5 py-0.5 text-xs text-pear-deep">None</code>, queries standard cache paths or downloads weights.</div>
+                <div className="text-muted">Path to local model weights (<code className="font-mono bg-panel border border-line px-1.5 py-0.5 text-xs text-pear-deep">.safetensors</code> or <code className="font-mono bg-panel border border-line px-1.5 py-0.5 text-xs text-pear-deep">.pt</code>). If <code className="font-mono bg-panel border border-line px-1.5 py-0.5 text-xs text-pear-deep">None</code>, queries standard cache paths or downloads weights.</div>
               </div>
               <div className="flex gap-3.5 py-2.5 border-b border-line text-[13px] last:border-b-0">
                 <div className="font-mono text-pear-deep w-[140px] shrink-0">device</div>
@@ -234,7 +234,7 @@ export default function DocsPage() {
               <div className="flex gap-3.5 py-2.5 border-b border-line text-[13px] last:border-b-0">
                 <div className="font-mono text-pear-deep w-[140px] shrink-0">download_url</div>
                 <div className="font-mono text-muted w-[90px] shrink-0">str | None</div>
-                <div className="text-muted">Fallback release URL used to fetch model weights if they are not stored locally.</div>
+                <div className="text-muted">Fallback URL used to fetch model weights if they are not stored locally. Defaults to the <code className="font-mono bg-panel border border-line px-1.5 py-0.5 text-xs text-pear-deep">model.safetensors</code> release on <a href="https://huggingface.co/peargentlabs/otter-chess" target="_blank" rel="noopener noreferrer" className="text-pear-deep underline">Hugging Face</a>.</div>
               </div>
             </div>
           </div>

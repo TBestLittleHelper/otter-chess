@@ -2,9 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
+  # Lets publish.yml gate a PyPI release on this same suite instead of
+  # duplicating the steps there.
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
   test:

@@ -123,7 +123,7 @@ export function useStockfish(refs: {
                   promotion: move.length > 4 ? (move.slice(4) as any) : undefined,
                 });
                 return mv ? { san: mv.san, evalCp: scoreCp, from: mv.from, to: mv.to } : null;
-              }).filter((m): m is { san: string; evalCp: number; from: string; to: string } => m !== null);
+              }).filter((m): m is NonNullable<typeof m> => m !== null);
               setSfTopMoves(sanRanked);
             } catch (_) {
               // keep the previous list rather than flashing empty on a

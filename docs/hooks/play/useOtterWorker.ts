@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { withBasePath } from '@/lib/site';
 
 // Owns the dedicated Otter inference worker (see public/otter-worker.js) —
 // spawning it, handing it the cached model, and the request/response
@@ -70,8 +71,8 @@ export function useOtterWorker(deps: {
   const loadAndInitModelFromCache = async () => {
     try {
       // 1. Fetch vocab files
-      const v1 = await fetch('/vocab/policy_move_to_id.json').then(r => r.json());
-      const v2 = await fetch('/vocab/history_move_to_id.json').then(r => r.json());
+      const v1 = await fetch(withBasePath('/vocab/policy_move_to_id.json')).then(r => r.json());
+      const v2 = await fetch(withBasePath('/vocab/history_move_to_id.json')).then(r => r.json());
       policyMoveToIdRef.current = v1;
       historyMoveToIdRef.current = v2;
 
@@ -92,7 +93,7 @@ export function useOtterWorker(deps: {
       // session.run() calls happen on this worker's thread from now on —
       // see public/otter-worker.js and callOtterWorker() above.
       otterWorkerRef.current?.terminate();
-      const worker = new Worker('/otter-worker.js');
+      const worker = new Worker(withBasePath('/otter-worker.js'));
       otterWorkerRef.current = worker;
 
       worker.onmessage = (ev) => {
