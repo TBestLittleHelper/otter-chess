@@ -1,4 +1,4 @@
-![Otter](docs/public/otter-hero-with-otter.png)
+![Otter](docs/public/real-ooter-banner.png)
 
 Otter is a skill-conditioned chess move prediction model. It predicts what move a player of a given Elo rating would make in a position, conditioned on game history, time control, and the remaining clock time.
 
