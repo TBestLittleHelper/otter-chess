@@ -34,7 +34,6 @@ import LobbySidebar from '@/components/play/LobbySidebar';
 import AnalyzeSidebar from '@/components/play/AnalyzeSidebar';
 import EditorSidebar from '@/components/play/EditorSidebar';
 import NotationColumn from '@/components/play/NotationColumn';
-import StatusToast from '@/components/play/StatusToast';
 import FenPgnModal from '@/components/play/modals/FenPgnModal';
 import PromotionModal from '@/components/play/modals/PromotionModal';
 import DrawDeclinedModal from '@/components/play/modals/DrawDeclinedModal';
@@ -85,8 +84,7 @@ export default function PlayPage() {
   // Engine & Asset Availability
   const [modelAvailable, setModelAvailable] = useState<boolean>(false);
   const [stockfishAvailable, setStockfishAvailable] = useState<boolean>(false);
-  const [checkingAvailability, setCheckingAvailability] = useState<boolean>(true);
-  
+
   // Downloading States
   const [isDownloadingModel, setIsDownloadingModel] = useState<boolean>(false);
   const [modelProgress, setModelProgress] = useState<number>(0);
@@ -122,7 +120,7 @@ export default function PlayPage() {
 
   // Model Loading & Execution State
   const [showSetupModal, setShowSetupModal] = useState<boolean>(false);
-  const [showReadyToast, setShowReadyToast] = useState<boolean>(true);
+  const [showEngineLockedHint, setShowEngineLockedHint] = useState<boolean>(false);
   const [liveFenInput, setLiveFenInput] = useState<string>("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
   const [livePgnInput, setLivePgnInput] = useState<string>("");
   const [ortLoaded, setOrtLoaded] = useState<boolean>(false);
@@ -305,25 +303,41 @@ export default function PlayPage() {
         setModelAvailable(hasModel);
         setStockfishAvailable(hasSf);
 
-        if (hasModel && hasSf) {
-          // Warm up session in the background
-          await loadAndInitModelFromCache();
-        } else {
+        if (!hasModel || !hasSf) {
           // Engines missing — open the download dialog immediately instead
           // of leaving it to a small bottom-corner toast that's easy to
           // miss (especially on mobile, where it's not even in view until
           // you scroll).
           setShowSetupModal(true);
         }
+        // Session warm-up itself happens in the effect below, which reacts
+        // to modelAvailable/stockfishAvailable once they're both true —
+        // that covers both this already-cached case and the fresh-download
+        // case in one place.
       } catch (err) {
         console.error("Cache check failed:", err);
-      } finally {
-        setCheckingAvailability(false);
       }
     };
 
     initializePage();
   }, []);
+
+  // Warm up the Otter worker exactly once both assets are available. This
+  // used to be triggered ad hoc from inside downloadOtterModel/
+  // downloadStockfish (each checking "is the other one already done?"),
+  // but those checks read the *other* download's state through a stale
+  // closure — when both downloads run concurrently (the normal case: the
+  // setup modal has both "Download" buttons right there to click in a row),
+  // each one's snapshot of the other's availability was still false, so
+  // neither ever called it and the worker was never created. Reacting to
+  // the state here always sees the current values.
+  const modelInitStartedRef = useRef(false);
+  useEffect(() => {
+    if (modelAvailable && stockfishAvailable && !modelInitStartedRef.current) {
+      modelInitStartedRef.current = true;
+      loadAndInitModelFromCache();
+    }
+  }, [modelAvailable, stockfishAvailable]);
 
   // Keep gameRef mirroring the latest `game` on every render.
   useEffect(() => {
@@ -1024,17 +1038,19 @@ export default function PlayPage() {
   // Check if both engines are fully ready
   const enginesReady = modelAvailable && stockfishAvailable;
 
-  // Timed fade-away effect for ready toast
-  useEffect(() => {
-    if (enginesReady) {
-      const t = setTimeout(() => {
-        setShowReadyToast(false);
-      }, 4000);
-      return () => clearTimeout(t);
-    }
-  }, [enginesReady]);
+  // Brief hint shown when a gated lobby action is clicked before the
+  // engines have finished downloading.
+  const engineLockedHintTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showEngineLockedNotice = () => {
+    setShowEngineLockedHint(true);
+    if (engineLockedHintTimeout.current) clearTimeout(engineLockedHintTimeout.current);
+    engineLockedHintTimeout.current = setTimeout(() => setShowEngineLockedHint(false), 2800);
+  };
+  useEffect(() => () => {
+    if (engineLockedHintTimeout.current) clearTimeout(engineLockedHintTimeout.current);
+  }, []);
 
-  // Download Otter Model (62MB)
+  // Download Otter Model (31MB)
   const downloadOtterModel = async () => {
     if (isDownloadingModel) return;
     setIsDownloadingModel(true);
@@ -1046,7 +1062,7 @@ export default function PlayPage() {
       if (!res.body) throw new Error("Null response body");
 
       const contentLength = res.headers.get('content-length');
-      const total = contentLength ? parseInt(contentLength, 10) : 62 * 1024 * 1024;
+      const total = contentLength ? parseInt(contentLength, 10) : 31 * 1024 * 1024;
       const reader = res.body.getReader();
       let loaded = 0;
       const chunks: Uint8Array[] = [];
@@ -1067,11 +1083,6 @@ export default function PlayPage() {
       
       setModelAvailable(true);
       setModelProgress(100);
-      
-      // If Stockfish is already downloaded, warm up the model
-      if (stockfishAvailable) {
-        await loadAndInitModelFromCache();
-      }
     } catch (err) {
       console.error("Otter download failed:", err);
       setDownloadError("Failed to download the Otter Chess model. Please check your connection and try again.");
@@ -1113,11 +1124,6 @@ export default function PlayPage() {
       
       setStockfishAvailable(true);
       setSfProgress(100);
-
-      // If Otter is already downloaded, warm up the model
-      if (modelAvailable) {
-        await loadAndInitModelFromCache();
-      }
     } catch (err) {
       console.error("Stockfish download failed:", err);
       setDownloadError("Failed to download Stockfish. Please check your connection and try again.");
@@ -2586,6 +2592,7 @@ export default function PlayPage() {
             onAnalyzeClick={handleAnalyzeClick}
             onEditorClick={openEditor}
             onSetupClick={() => setShowSetupModal(true)}
+            onLockedClick={showEngineLockedNotice}
             loadGameForAnalysis={loadGameForAnalysis}
           />
         ) : (
@@ -2602,15 +2609,13 @@ export default function PlayPage() {
 
       </div>
 
-      {/* Floating Status Toast (Bottom Right) */}
-      {showReadyToast && (
-        <StatusToast
-          checkingAvailability={checkingAvailability}
-          enginesReady={enginesReady}
-          modelAvailable={modelAvailable}
-          stockfishAvailable={stockfishAvailable}
-          onSetupClick={() => setShowSetupModal(true)}
-        />
+      {/* Floating hint (Bottom Right): nudges toward the sidebar's own
+          "Set Up Engines" button when a gated action is clicked too early. */}
+      {showEngineLockedHint && (
+        <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2 py-2.5 px-4 bg-panel border border-orange-500/50 rounded-sm shadow-2xl text-paper text-xs font-mono max-w-sm animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500 shrink-0"></span>
+          <span className="text-paper/85">Download the engine first, then you can play.</span>
+        </div>
       )}
 
       {/* ================= MODAL: FEN / PGN (Analyze mode) ================= */}

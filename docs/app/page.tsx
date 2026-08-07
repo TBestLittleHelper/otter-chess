@@ -30,7 +30,7 @@ export default function HomePage() {
                 Play Otter →
               </Link>
               <a
-                href="https://github.com/PeargentLabs/otter-paper/blob/main/Otter_A_Time-Aware_History-Conditioned_Human_Chess_AI.pdf"
+                href="https://arxiv.org/abs/2608.05206"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-mono text-[13px] tracking-[0.01em] text-paper border-b border-line pb-[2px] hover:text-pear hover:border-pear transition-all duration-150 cursor-pointer flex items-center gap-[7px]"
@@ -39,7 +39,7 @@ export default function HomePage() {
               </a>
             </div>
           </div>
-          <div className="bg-pear-tint aspect-square flex items-center justify-center relative w-full rounded-sm overflow-hidden">
+          <div className="aspect-square flex items-center justify-center relative w-full rounded-sm overflow-hidden">
             <img
               src={withBasePath("/otter-hero.png")}
               alt="Pixel-art otter pondering a pawn on a chessboard"
@@ -201,7 +201,7 @@ export default function HomePage() {
             </span>
           </a>
           <a
-            href="https://github.com/PeargentLabs/otter-paper/blob/main/Otter_A_Time-Aware_History-Conditioned_Human_Chess_AI.pdf"
+            href="https://arxiv.org/abs/2608.05206"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-baseline justify-between py-[26px] border-t border-line last:border-b last:border-line hover:pl-[10px] transition-all duration-200 cursor-pointer"
@@ -210,7 +210,7 @@ export default function HomePage() {
               Paper
             </span>
             <span className="font-mono text-[12px] text-muted">
-              PDF ↗
+              arXiv ↗
             </span>
           </a>
         </div>

@@ -9,6 +9,7 @@ export default function LobbySidebar({
   onAnalyzeClick,
   onEditorClick,
   onSetupClick,
+  onLockedClick,
   loadGameForAnalysis,
 }: {
   enginesReady: boolean;
@@ -17,6 +18,7 @@ export default function LobbySidebar({
   onAnalyzeClick: () => void;
   onEditorClick: () => void;
   onSetupClick: () => void;
+  onLockedClick: () => void;
   loadGameForAnalysis: (input: string) => void;
 }) {
   return (
@@ -45,33 +47,36 @@ export default function LobbySidebar({
         {!enginesReady && (
           <button
             onClick={onSetupClick}
-            className="w-full py-3 font-space text-[12px] tracking-wider uppercase font-semibold text-bg bg-pear border border-pear hover:bg-[#4d7524] hover:border-[#4d7524] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+            className="w-full py-3 font-space text-[12px] tracking-wider uppercase font-semibold text-orange-950 bg-orange-400 border border-orange-400 hover:bg-orange-500 hover:border-orange-500 transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
           >
             <span>Set Up Engines</span>
-            <span className="font-mono text-[10px] normal-case tracking-normal opacity-80">64MB</span>
+            <span className="font-mono text-[10px] normal-case tracking-normal opacity-80">33MB</span>
           </button>
         )}
 
+        {/* These stay real (non-disabled) buttons even when the engines
+            aren't ready, so a click can surface a hint instead of doing
+            nothing — an actual `disabled` attribute swallows the click. */}
         <button
-          onClick={onChallengeClick}
-          disabled={!enginesReady}
-          className="w-full py-3 font-space text-[12px] tracking-wider uppercase font-semibold text-bg bg-pear border border-pear hover:bg-[#4d7524] hover:border-[#4d7524] transition-all flex items-center justify-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          onClick={enginesReady ? onChallengeClick : onLockedClick}
+          aria-disabled={!enginesReady}
+          className={`w-full py-3 font-space text-[12px] tracking-wider uppercase font-semibold text-bg bg-pear border border-pear hover:bg-[#4d7524] hover:border-[#4d7524] transition-all flex items-center justify-center shadow-lg cursor-pointer ${!enginesReady ? 'opacity-50' : ''}`}
         >
           <span>Challenge Otter AI</span>
         </button>
 
         <button
-          onClick={onAnalyzeClick}
-          disabled={!enginesReady}
-          className="w-full py-3 font-space text-[12px] tracking-wider uppercase font-semibold text-paper bg-bg border border-[#7a856f]/55 hover:border-pear hover:text-pear transition-all flex items-center justify-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          onClick={enginesReady ? onAnalyzeClick : onLockedClick}
+          aria-disabled={!enginesReady}
+          className={`w-full py-3 font-space text-[12px] tracking-wider uppercase font-semibold text-paper bg-bg border border-[#7a856f]/55 hover:border-pear hover:text-pear transition-all flex items-center justify-center shadow-lg cursor-pointer ${!enginesReady ? 'opacity-50' : ''}`}
         >
           <span>Analyze Game</span>
         </button>
 
         <button
-          onClick={onEditorClick}
-          disabled={!enginesReady}
-          className="w-full py-3 font-space text-[12px] tracking-wider uppercase font-semibold text-paper bg-bg border border-[#7a856f]/55 hover:border-pear hover:text-pear transition-all flex items-center justify-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          onClick={enginesReady ? onEditorClick : onLockedClick}
+          aria-disabled={!enginesReady}
+          className={`w-full py-3 font-space text-[12px] tracking-wider uppercase font-semibold text-paper bg-bg border border-[#7a856f]/55 hover:border-pear hover:text-pear transition-all flex items-center justify-center shadow-lg cursor-pointer ${!enginesReady ? 'opacity-50' : ''}`}
         >
           <span>Board Editor</span>
         </button>

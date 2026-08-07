@@ -176,7 +176,7 @@ We provide a beautiful, dark-themed, glassmorphic Next.js web application that r
 - **Play Arena**: Play chess against the model! It has:
   - Responsive vector SVG chess pieces with neon check highlights.
   - A real-time evaluation bar displaying the model's win/loss probability.
-  - Interactive overlay popups to download and cache the 62MB ONNX model weights.
+  - Interactive overlay popups to download and cache the 31MB ONNX model weights.
   - Model policy suggestions and auxiliary head prediction confidence scores.
 - **Developer Docs**: An interactive documentation dashboard styled like a macOS code editor.
 

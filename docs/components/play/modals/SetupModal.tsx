@@ -51,7 +51,7 @@ export default function SetupModal({
             <div className="flex justify-between items-center mb-3">
               <div>
                 <h3 className="text-xs font-mono font-bold text-paper">1. Otter Chess Model</h3>
-                <span className="text-[10px] text-muted">Neural weights file (62MB)</span>
+                <span className="text-[10px] text-muted">Neural weights file (31MB)</span>
               </div>
               {modelAvailable ? (
                 <span className="text-[10.5px] font-mono text-pear font-semibold border border-pear/30 bg-pear-tint/10 px-2 py-0.5">Downloaded ✓</span>
